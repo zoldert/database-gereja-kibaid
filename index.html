@@ -1,678 +1,350 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Gereja KIBAID Jemaat Ambon Kota</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          ungu: {
-            tua: '#3D1A52',
-            sedang: '#6B3FA0',
-            lembut: '#F1E9F7',
-            terang: '#EDE3F7'
-          },
-          teks: '#2A2230',
-          maroon: '#8C3A3A'
-        },
-        fontFamily: {
-          display: ['Anton', 'sans-serif'],
-          sub: ['Oswald', 'sans-serif'],
-          body: ['Inter', 'sans-serif']
-        }
-      }
-    }
-  }
-</script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-  body { font-family: 'Inter', sans-serif; }
-  .font-display { font-family: 'Anton', sans-serif; letter-spacing: 0.02em; }
-  .font-sub { font-family: 'Oswald', sans-serif; }
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-thumb { background: #C9A9D9; border-radius: 3px; }
-  .tab-active { color: #3D1A52; }
-  .tab-inactive { color: #B9A6C7; }
-  .view { display: none; }
-  .view.active { display: block; }
-  .fade-in { animation: fadeIn 0.25s ease-in; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-  .motif-strip {
-    height: 6px;
-    background: repeating-linear-gradient(135deg, #3D1A52 0 10px, #6B3FA0 10px 20px, #C9A9D9 20px 30px);
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Gereja KIBAID</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-white text-teks pb-24 min-h-screen">
+<body class="bg-gray-50 pb-24 font-sans text-gray-800">
 
-<!-- HEADER -->
-<header class="bg-ungu-tua text-white sticky top-0 z-40 shadow-md">
-  <div class="motif-strip"></div>
-  <div class="px-5 pt-4 pb-4 flex items-center justify-between">
-    <div>
-      <h1 class="font-display text-2xl leading-none tracking-wide">GEREJA KIBAID</h1>
-      <p class="font-sub text-xs text-ungu-terang mt-1 tracking-wider uppercase">Jemaat Ambon Kota</p>
-    </div>
-    <div id="statusBadge" class="text-[10px] font-sub uppercase tracking-wider bg-ungu-sedang/60 px-2 py-1 rounded-full">
-      Publik
-    </div>
-  </div>
-</header>
+    <!-- HEADER -->
+    <header class="sticky top-0 bg-blue-900 py-4 text-center text-white shadow-md z-50 max-w-md mx-auto">
+        <h1 class="text-xl font-bold font-serif tracking-wide">KIBAID DATABASE</h1>
+    </header>
 
-<!-- MAIN CONTENT -->
-<main class="max-w-lg mx-auto px-4 pt-5">
-
-  <!-- VIEW: BERANDA -->
-  <section id="view-beranda" class="view active fade-in">
-    <h2 class="font-sub text-lg uppercase tracking-wide text-ungu-tua mb-3">Jadwal Mendatang</h2>
-    <div id="jadwalList" class="space-y-3 mb-8">
-      <p class="text-sm text-gray-400">Memuat jadwal...</p>
-    </div>
-
-    <h2 class="font-sub text-lg uppercase tracking-wide text-ungu-tua mb-3">Ringkasan Keuangan Bulan Ini</h2>
-    <div id="ringkasanKeuangan" class="grid grid-cols-3 gap-2 mb-4">
-      <div class="bg-ungu-lembut rounded-xl p-3 text-center">
-        <p class="text-[10px] font-sub uppercase text-ungu-sedang">Persembahan</p>
-        <p id="totalPersembahan" class="font-semibold text-sm mt-1">Rp 0</p>
-      </div>
-      <div class="bg-ungu-lembut rounded-xl p-3 text-center">
-        <p class="text-[10px] font-sub uppercase text-maroon">Pengeluaran</p>
-        <p id="totalPengeluaran" class="font-semibold text-sm mt-1">Rp 0</p>
-      </div>
-      <div class="bg-ungu-lembut rounded-xl p-3 text-center">
-        <p class="text-[10px] font-sub uppercase text-ungu-sedang">Dana Khusus</p>
-        <p id="totalDanaKhusus" class="font-semibold text-sm mt-1">Rp 0</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- VIEW: KEUANGAN -->
-  <section id="view-keuangan" class="view fade-in">
-    <h2 class="font-sub text-lg uppercase tracking-wide text-ungu-tua mb-3">Riwayat Keuangan</h2>
-    <div id="keuanganList" class="space-y-2">
-      <p class="text-sm text-gray-400">Memuat data...</p>
-    </div>
-  </section>
-
-  <!-- VIEW: JEMAAT -->
-  <section id="view-jemaat" class="view fade-in">
-    <h2 class="font-sub text-lg uppercase tracking-wide text-ungu-tua mb-3">Data Jemaat</h2>
-    <input id="cariJemaat" type="text" placeholder="Cari nama jemaat..." class="w-full border border-ungu-terang rounded-lg px-3 py-2 mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-ungu-sedang">
-    <div id="jemaatList" class="space-y-2">
-      <p class="text-sm text-gray-400">Memuat data...</p>
-    </div>
-  </section>
-
-  <!-- VIEW: GALERI -->
-  <section id="view-galeri" class="view fade-in">
-    <h2 class="font-sub text-lg uppercase tracking-wide text-ungu-tua mb-3">Galeri Kegiatan</h2>
-    <div id="galeriList" class="grid grid-cols-2 gap-2">
-      <p class="text-sm text-gray-400 col-span-2">Memuat foto...</p>
-    </div>
-  </section>
-
-  <!-- VIEW: STRUKTUR PENGURUS -->
-  <section id="view-struktur" class="view fade-in">
-    <h2 class="font-sub text-lg uppercase tracking-wide text-ungu-tua mb-3">Susunan Pengurus</h2>
-    <div id="strukturList" class="space-y-4">
-      <p class="text-sm text-gray-400">Memuat data...</p>
-    </div>
-  </section>
-
-  <!-- VIEW: ADMIN -->
-  <section id="view-admin" class="view fade-in">
-
-    <!-- Login Form -->
-    <div id="loginBox">
-      <h2 class="font-sub text-lg uppercase tracking-wide text-ungu-tua mb-3">Masuk Pengurus</h2>
-      <div class="space-y-3">
-        <input id="loginEmail" type="email" placeholder="Email" class="w-full border border-ungu-terang rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ungu-sedang">
-        <input id="loginPassword" type="password" placeholder="Kata sandi" class="w-full border border-ungu-terang rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ungu-sedang">
-        <button onclick="login()" class="w-full bg-ungu-tua text-white font-sub uppercase tracking-wide py-2 rounded-lg text-sm hover:bg-ungu-sedang transition">Masuk</button>
-        <p id="loginError" class="text-xs text-maroon hidden"></p>
-      </div>
-    </div>
-
-    <!-- Admin Dashboard -->
-    <div id="dashboardBox" class="hidden">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="font-sub text-lg uppercase tracking-wide text-ungu-tua">Panel Pengurus</h2>
-        <button onclick="logout()" class="text-xs font-sub uppercase text-maroon border border-maroon rounded-full px-3 py-1">Keluar</button>
-      </div>
-
-      <!-- Sub tabs -->
-      <div class="flex gap-2 mb-4 text-xs font-sub uppercase flex-wrap">
-        <button onclick="showAdminTab('jemaat')" id="atab-jemaat" class="admin-tab px-3 py-1.5 rounded-full bg-ungu-tua text-white">Jemaat</button>
-        <button onclick="showAdminTab('keuangan')" id="atab-keuangan" class="admin-tab px-3 py-1.5 rounded-full bg-ungu-lembut text-ungu-tua">Keuangan</button>
-        <button onclick="showAdminTab('jadwal')" id="atab-jadwal" class="admin-tab px-3 py-1.5 rounded-full bg-ungu-lembut text-ungu-tua">Jadwal</button>
-        <button onclick="showAdminTab('galeri')" id="atab-galeri" class="admin-tab px-3 py-1.5 rounded-full bg-ungu-lembut text-ungu-tua">Galeri</button>
-        <button onclick="showAdminTab('struktur')" id="atab-struktur" class="admin-tab px-3 py-1.5 rounded-full bg-ungu-lembut text-ungu-tua">Struktur</button>
-      </div>
-
-      <!-- Admin: Jemaat -->
-      <div id="admin-jemaat" class="admin-panel space-y-2">
-        <div class="bg-ungu-lembut rounded-xl p-3 space-y-2 mb-3">
-          <input id="j_nama" placeholder="Nama lengkap" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-          <input id="j_alamat" placeholder="Alamat" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-          <input id="j_hp" placeholder="No. HP" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-          <input id="j_tgl" type="date" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-          <select id="j_status" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-            <option value="">Status keluarga</option>
-            <option>Kepala Keluarga</option>
-            <option>Anggota Keluarga</option>
-          </select>
-          <input id="j_kolom" placeholder="Kolom / wilayah pelayanan" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-          <button onclick="tambahJemaat()" class="w-full bg-ungu-tua text-white font-sub uppercase text-xs py-2 rounded-lg">Simpan Jemaat</button>
+    <!-- CONTAINER UTAMA (MOBILE LAYOUT) -->
+    <main class="p-4 max-w-md mx-auto min-h-screen">
+        
+        <!-- LOADING INDICATOR -->
+        <div id="loading" class="text-center py-8 font-medium text-blue-950">
+            ⏳ Memuat data dari Supabase...
         </div>
-        <div id="adminJemaatList" class="space-y-2"></div>
-      </div>
 
-      <!-- Admin: Keuangan -->
-      <div id="admin-keuangan" class="admin-panel space-y-2 hidden">
-        <div class="bg-ungu-lembut rounded-xl p-3 space-y-2 mb-3">
-          <input id="k_tanggal" type="date" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-          <select id="k_jenis" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-            <option value="">Jenis transaksi</option>
-            <option>Persembahan</option>
-            <option>Pengeluaran</option>
-            <option>Dana Khusus</option>
-          </select>
-          <input id="k_kategori" placeholder="Kategori (misal: kolekte minggu, listrik)" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-          <input id="k_jumlah" type="number" placeholder="Jumlah (Rp)" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-          <input id="k_ket" placeholder="Keterangan" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-          <button onclick="tambahKeuangan()" class="w-full bg-ungu-tua text-white font-sub uppercase text-xs py-2 rounded-lg">Simpan Transaksi</button>
-        </div>
-        <div id="adminKeuanganList" class="space-y-2"></div>
-      </div>
-
-      <!-- Admin: Jadwal -->
-      <div id="admin-jadwal" class="admin-panel space-y-2 hidden">
-        <div class="bg-ungu-lembut rounded-xl p-3 space-y-2 mb-3">
-          <input id="jd_judul" placeholder="Judul kegiatan" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-          <select id="jd_jenis" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-            <option value="">Jenis</option>
-            <option>Ibadah</option>
-            <option>Pelayanan</option>
-          </select>
-          <input id="jd_tanggal" type="date" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-          <input id="jd_waktu" type="time" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-          <input id="jd_lokasi" placeholder="Lokasi" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-          <input id="jd_ket" placeholder="Keterangan" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-          <button onclick="tambahJadwal()" class="w-full bg-ungu-tua text-white font-sub uppercase text-xs py-2 rounded-lg">Simpan Jadwal</button>
-        </div>
-        <div id="adminJadwalList" class="space-y-2"></div>
-      </div>
-
-      <!-- Admin: Galeri -->
-      <div id="admin-galeri" class="admin-panel space-y-2 hidden">
-        <div class="bg-ungu-lembut rounded-xl p-3 space-y-2 mb-3">
-          <input id="g_judul" placeholder="Judul foto/kegiatan" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-          <input id="g_tanggal" type="date" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-          <input id="g_ket" placeholder="Keterangan (opsional)" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-          <input id="g_file" type="file" accept="image/*" class="w-full text-xs bg-white rounded-lg px-3 py-2">
-          <button onclick="tambahGaleri()" id="btnUploadGaleri" class="w-full bg-ungu-tua text-white font-sub uppercase text-xs py-2 rounded-lg">Upload Foto</button>
-        </div>
-        <div id="adminGaleriList" class="grid grid-cols-2 gap-2"></div>
-      </div>
-
-      <!-- Admin: Struktur Pengurus -->
-      <div id="admin-struktur" class="admin-panel space-y-2 hidden">
-        <div class="bg-ungu-lembut rounded-xl p-3 space-y-2 mb-3">
-          <input id="s_nama" placeholder="Nama" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-          <input id="s_jabatan" placeholder="Jabatan (misal: Ketua Majelis)" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-          <input id="s_kategori" placeholder="Kategori (misal: Majelis, Kaum Wanita, Pemuda)" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-          <input id="s_urutan" type="number" placeholder="Urutan tampil (angka kecil di atas)" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
-          <button onclick="tambahStruktur()" class="w-full bg-ungu-tua text-white font-sub uppercase text-xs py-2 rounded-lg">Simpan</button>
-        </div>
-        <div id="adminStrukturList" class="space-y-2"></div>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<!-- BOTTOM NAV -->
-<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-ungu-terang z-40">
-  <div class="max-w-lg mx-auto grid grid-cols-6 text-center">
-    <button onclick="showView('beranda')" id="nav-beranda" class="nav-btn tab-active py-2.5 flex flex-col items-center gap-1">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg>
-      <span class="text-[9px] font-sub uppercase">Beranda</span>
-    </button>
-    <button onclick="showView('keuangan')" id="nav-keuangan" class="nav-btn tab-inactive py-2.5 flex flex-col items-center gap-1">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>
-      <span class="text-[9px] font-sub uppercase">Keuangan</span>
-    </button>
-    <button onclick="showView('jemaat')" id="nav-jemaat" class="nav-btn tab-inactive py-2.5 flex flex-col items-center gap-1">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3 3-5 7-5s7 2 7 5"/><circle cx="17" cy="9" r="2.5"/><path d="M22 20c0-2.5-2-4-4.5-4.3"/></svg>
-      <span class="text-[9px] font-sub uppercase">Jemaat</span>
-    </button>
-    <button onclick="showView('galeri')" id="nav-galeri" class="nav-btn tab-inactive py-2.5 flex flex-col items-center gap-1">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 16l-5-5-4 4-3-3-6 6"/></svg>
-      <span class="text-[9px] font-sub uppercase">Galeri</span>
-    </button>
-    <button onclick="showView('struktur')" id="nav-struktur" class="nav-btn tab-inactive py-2.5 flex flex-col items-center gap-1">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2.5"/><path d="M12 7.5v4"/><circle cx="6" cy="17" r="2.5"/><circle cx="12" cy="17" r="2.5"/><circle cx="18" cy="17" r="2.5"/><path d="M6 14.5v-3h12v3"/></svg>
-      <span class="text-[9px] font-sub uppercase">Struktur</span>
-    </button>
-    <button onclick="showView('admin')" id="nav-admin" class="nav-btn tab-inactive py-2.5 flex flex-col items-center gap-1">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg>
-      <span class="text-[9px] font-sub uppercase">Admin</span>
-    </button>
-  </div>
-</nav>
-
-<script>
-  // ================= KONFIGURASI SUPABASE =================
-  const SUPABASE_URL = 'https://udorycaiusvxsfxqoihg.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_-4nLJ-m4lAqwSgAiG9HOxQ_LxAEzG68';
-  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-  let isAdmin = false;
-
-  function formatRp(n) {
-    return 'Rp ' + Number(n || 0).toLocaleString('id-ID');
-  }
-  function formatTanggal(d) {
-    if (!d) return '';
-    return new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-  }
-
-  // ================= NAVIGASI =================
-  function showView(name) {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById('view-' + name).classList.add('active');
-    document.querySelectorAll('.nav-btn').forEach(b => { b.classList.remove('tab-active'); b.classList.add('tab-inactive'); });
-    document.getElementById('nav-' + name).classList.add('tab-active');
-    document.getElementById('nav-' + name).classList.remove('tab-inactive');
-  }
-
-  function showAdminTab(name) {
-    document.querySelectorAll('.admin-panel').forEach(p => p.classList.add('hidden'));
-    document.getElementById('admin-' + name).classList.remove('hidden');
-    document.querySelectorAll('.admin-tab').forEach(t => { t.classList.remove('bg-ungu-tua','text-white'); t.classList.add('bg-ungu-lembut','text-ungu-tua'); });
-    document.getElementById('atab-' + name).classList.add('bg-ungu-tua','text-white');
-    document.getElementById('atab-' + name).classList.remove('bg-ungu-lembut','text-ungu-tua');
-  }
-
-  // ================= AUTH =================
-  async function login() {
-    const email = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPassword').value;
-    const errEl = document.getElementById('loginError');
-    errEl.classList.add('hidden');
-    if (!email || !password) {
-      errEl.textContent = 'Isi email dan kata sandi terlebih dahulu.';
-      errEl.classList.remove('hidden');
-      return;
-    }
-    const { data, error } = await sb.auth.signInWithPassword({ email, password });
-    if (error) {
-      errEl.textContent = 'Gagal masuk: email atau kata sandi salah.';
-      errEl.classList.remove('hidden');
-      return;
-    }
-    await checkAdminStatus();
-  }
-
-  async function logout() {
-    await sb.auth.signOut();
-    isAdmin = false;
-    document.getElementById('loginBox').classList.remove('hidden');
-    document.getElementById('dashboardBox').classList.add('hidden');
-    document.getElementById('statusBadge').textContent = 'Publik';
-  }
-
-  async function checkAdminStatus() {
-    const { data: { session } } = await sb.auth.getSession();
-    if (!session) { isAdmin = false; return; }
-    const { data: profile } = await sb.from('profiles').select('*').eq('id', session.user.id).maybeSingle();
-    if (profile) {
-      isAdmin = true;
-      document.getElementById('loginBox').classList.add('hidden');
-      document.getElementById('dashboardBox').classList.remove('hidden');
-      document.getElementById('statusBadge').textContent = 'Pengurus: ' + profile.nama;
-      loadAdminJemaat();
-      loadAdminKeuangan();
-      loadAdminJadwal();
-      loadAdminGaleri();
-      loadAdminStruktur();
-    } else {
-      const errEl = document.getElementById('loginError');
-      errEl.textContent = 'Akun ini belum terdaftar sebagai pengurus.';
-      errEl.classList.remove('hidden');
-      await sb.auth.signOut();
-    }
-  }
-
-  // ================= BERANDA: JADWAL + RINGKASAN =================
-  async function loadJadwal() {
-    const today = new Date().toISOString().slice(0,10);
-    const { data, error } = await sb.from('jadwal').select('*').gte('tanggal', today).order('tanggal', { ascending: true }).limit(5);
-    const el = document.getElementById('jadwalList');
-    if (error || !data || data.length === 0) {
-      el.innerHTML = '<p class="text-sm text-gray-400">Belum ada jadwal mendatang.</p>';
-      return;
-    }
-    el.innerHTML = data.map(j => `
-      <div class="border border-ungu-terang rounded-xl p-3">
-        <p class="text-[10px] font-sub uppercase text-ungu-sedang">${j.jenis}</p>
-        <p class="font-semibold text-sm">${j.judul}</p>
-        <p class="text-xs text-gray-500 mt-1">${formatTanggal(j.tanggal)}${j.waktu ? ' • ' + j.waktu.slice(0,5) : ''}${j.lokasi ? ' • ' + j.lokasi : ''}</p>
-      </div>
-    `).join('');
-  }
-
-  async function loadRingkasanKeuangan() {
-    const startBulan = new Date(); startBulan.setDate(1);
-    const startStr = startBulan.toISOString().slice(0,10);
-    const { data, error } = await sb.from('keuangan').select('*').gte('tanggal', startStr);
-    if (error || !data) return;
-    const totalByJenis = (jenis) => data.filter(d => d.jenis === jenis).reduce((a,b) => a + Number(b.jumlah), 0);
-    document.getElementById('totalPersembahan').textContent = formatRp(totalByJenis('Persembahan'));
-    document.getElementById('totalPengeluaran').textContent = formatRp(totalByJenis('Pengeluaran'));
-    document.getElementById('totalDanaKhusus').textContent = formatRp(totalByJenis('Dana Khusus'));
-  }
-
-  // ================= KEUANGAN (RIWAYAT) =================
-  async function loadKeuanganList() {
-    const { data, error } = await sb.from('keuangan').select('*').order('tanggal', { ascending: false }).limit(50);
-    const el = document.getElementById('keuanganList');
-    if (error || !data || data.length === 0) {
-      el.innerHTML = '<p class="text-sm text-gray-400">Belum ada data keuangan.</p>';
-      return;
-    }
-    el.innerHTML = data.map(k => `
-      <div class="flex items-center justify-between border border-ungu-terang rounded-xl p-3">
-        <div>
-          <p class="text-[10px] font-sub uppercase ${k.jenis === 'Pengeluaran' ? 'text-maroon' : 'text-ungu-sedang'}">${k.jenis}${k.kategori ? ' • ' + k.kategori : ''}</p>
-          <p class="text-xs text-gray-500">${formatTanggal(k.tanggal)}</p>
-        </div>
-        <p class="font-semibold text-sm ${k.jenis === 'Pengeluaran' ? 'text-maroon' : 'text-ungu-tua'}">${k.jenis === 'Pengeluaran' ? '-' : '+'} ${formatRp(k.jumlah)}</p>
-      </div>
-    `).join('');
-  }
-
-  // ================= JEMAAT (PUBLIK) =================
-  let semuaJemaatPublik = [];
-  async function loadJemaatPublik() {
-    const { data, error } = await sb.from('jemaat_publik').select('*').order('nama', { ascending: true });
-    if (error || !data) return;
-    semuaJemaatPublik = data;
-    renderJemaatPublik(data);
-  }
-  function renderJemaatPublik(data) {
-    const el = document.getElementById('jemaatList');
-    if (data.length === 0) {
-      el.innerHTML = '<p class="text-sm text-gray-400">Tidak ada data ditemukan.</p>';
-      return;
-    }
-    el.innerHTML = data.map(j => `
-      <div class="flex items-center justify-between border border-ungu-terang rounded-xl px-3 py-2.5">
-        <p class="text-sm font-medium">${j.nama}</p>
-        <p class="text-xs text-ungu-sedang font-sub uppercase">${j.kolom || '-'}</p>
-      </div>
-    `).join('');
-  }
-  document.getElementById('cariJemaat').addEventListener('input', (e) => {
-    const q = e.target.value.toLowerCase();
-    renderJemaatPublik(semuaJemaatPublik.filter(j => j.nama.toLowerCase().includes(q)));
-  });
-
-  // ================= ADMIN: JEMAAT =================
-  async function tambahJemaat() {
-    const payload = {
-      nama: document.getElementById('j_nama').value.trim(),
-      alamat: document.getElementById('j_alamat').value.trim(),
-      no_hp: document.getElementById('j_hp').value.trim(),
-      tanggal_lahir: document.getElementById('j_tgl').value || null,
-      status_keluarga: document.getElementById('j_status').value,
-      kolom: document.getElementById('j_kolom').value.trim()
-    };
-    if (!payload.nama) { alert('Nama wajib diisi.'); return; }
-    const { error } = await sb.from('jemaat').insert(payload);
-    if (error) { alert('Gagal menyimpan: ' + error.message); return; }
-    ['j_nama','j_alamat','j_hp','j_tgl','j_status','j_kolom'].forEach(id => document.getElementById(id).value = '');
-    loadAdminJemaat();
-    loadJemaatPublik();
-  }
-  async function loadAdminJemaat() {
-    const { data, error } = await sb.from('jemaat').select('*').order('nama', { ascending: true });
-    const el = document.getElementById('adminJemaatList');
-    if (error || !data) { el.innerHTML = ''; return; }
-    el.innerHTML = data.map(j => `
-      <div class="flex items-center justify-between border border-ungu-terang rounded-xl px-3 py-2.5">
-        <div>
-          <p class="text-sm font-medium">${j.nama} <span class="text-xs text-gray-400">(${j.status_keluarga || '-'})</span></p>
-          <p class="text-xs text-gray-500">${j.alamat || '-'} • ${j.no_hp || '-'} • ${j.kolom || '-'}</p>
-        </div>
-        <button onclick="hapusData('jemaat','${j.id}')" class="text-maroon text-xs font-sub uppercase">Hapus</button>
-      </div>
-    `).join('');
-  }
-
-  // ================= ADMIN: KEUANGAN =================
-  async function tambahKeuangan() {
-    const payload = {
-      tanggal: document.getElementById('k_tanggal').value,
-      jenis: document.getElementById('k_jenis').value,
-      kategori: document.getElementById('k_kategori').value.trim(),
-      jumlah: Number(document.getElementById('k_jumlah').value),
-      keterangan: document.getElementById('k_ket').value.trim()
-    };
-    if (!payload.tanggal || !payload.jenis || !payload.jumlah) { alert('Tanggal, jenis, dan jumlah wajib diisi.'); return; }
-    const { error } = await sb.from('keuangan').insert(payload);
-    if (error) { alert('Gagal menyimpan: ' + error.message); return; }
-    ['k_tanggal','k_jenis','k_kategori','k_jumlah','k_ket'].forEach(id => document.getElementById(id).value = '');
-    loadAdminKeuangan();
-    loadKeuanganList();
-    loadRingkasanKeuangan();
-  }
-  async function loadAdminKeuangan() {
-    const { data, error } = await sb.from('keuangan').select('*').order('tanggal', { ascending: false }).limit(50);
-    const el = document.getElementById('adminKeuanganList');
-    if (error || !data) { el.innerHTML = ''; return; }
-    el.innerHTML = data.map(k => `
-      <div class="flex items-center justify-between border border-ungu-terang rounded-xl px-3 py-2.5">
-        <div>
-          <p class="text-sm font-medium">${k.jenis} <span class="text-xs text-gray-400">${k.kategori || ''}</span></p>
-          <p class="text-xs text-gray-500">${formatTanggal(k.tanggal)} • ${formatRp(k.jumlah)}</p>
-        </div>
-        <button onclick="hapusData('keuangan','${k.id}')" class="text-maroon text-xs font-sub uppercase">Hapus</button>
-      </div>
-    `).join('');
-  }
-
-  // ================= ADMIN: JADWAL =================
-  async function tambahJadwal() {
-    const payload = {
-      judul: document.getElementById('jd_judul').value.trim(),
-      jenis: document.getElementById('jd_jenis').value,
-      tanggal: document.getElementById('jd_tanggal').value,
-      waktu: document.getElementById('jd_waktu').value || null,
-      lokasi: document.getElementById('jd_lokasi').value.trim(),
-      keterangan: document.getElementById('jd_ket').value.trim()
-    };
-    if (!payload.judul || !payload.jenis || !payload.tanggal) { alert('Judul, jenis, dan tanggal wajib diisi.'); return; }
-    const { error } = await sb.from('jadwal').insert(payload);
-    if (error) { alert('Gagal menyimpan: ' + error.message); return; }
-    ['jd_judul','jd_jenis','jd_tanggal','jd_waktu','jd_lokasi','jd_ket'].forEach(id => document.getElementById(id).value = '');
-    loadAdminJadwal();
-    loadJadwal();
-  }
-  async function loadAdminJadwal() {
-    const { data, error } = await sb.from('jadwal').select('*').order('tanggal', { ascending: false }).limit(50);
-    const el = document.getElementById('adminJadwalList');
-    if (error || !data) { el.innerHTML = ''; return; }
-    el.innerHTML = data.map(j => `
-      <div class="flex items-center justify-between border border-ungu-terang rounded-xl px-3 py-2.5">
-        <div>
-          <p class="text-sm font-medium">${j.judul} <span class="text-xs text-gray-400">(${j.jenis})</span></p>
-          <p class="text-xs text-gray-500">${formatTanggal(j.tanggal)}${j.waktu ? ' • ' + j.waktu.slice(0,5) : ''} • ${j.lokasi || '-'}</p>
-        </div>
-        <button onclick="hapusData('jadwal','${j.id}')" class="text-maroon text-xs font-sub uppercase">Hapus</button>
-      </div>
-    `).join('');
-  }
-
-  // ================= GALERI (PUBLIK) =================
-  async function loadGaleriPublik() {
-    const { data, error } = await sb.from('galeri').select('*').order('tanggal', { ascending: false }).limit(30);
-    const el = document.getElementById('galeriList');
-    if (error || !data || data.length === 0) {
-      el.innerHTML = '<p class="text-sm text-gray-400 col-span-2">Belum ada foto kegiatan.</p>';
-      return;
-    }
-    el.innerHTML = data.map(g => `
-      <div class="rounded-xl overflow-hidden border border-ungu-terang">
-        <img src="${g.foto_url}" alt="${g.judul}" class="w-full h-28 object-cover">
-        <div class="p-2">
-          <p class="text-xs font-medium leading-tight">${g.judul}</p>
-          <p class="text-[10px] text-gray-400">${formatTanggal(g.tanggal)}</p>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  // ================= GALERI (ADMIN) =================
-  async function tambahGaleri() {
-    const judul = document.getElementById('g_judul').value.trim();
-    const tanggal = document.getElementById('g_tanggal').value;
-    const keterangan = document.getElementById('g_ket').value.trim();
-    const fileInput = document.getElementById('g_file');
-    const file = fileInput.files[0];
-    if (!judul || !file) { alert('Judul dan file foto wajib diisi.'); return; }
-
-    const btn = document.getElementById('btnUploadGaleri');
-    btn.textContent = 'Mengunggah...';
-    btn.disabled = true;
-
-    const path = Date.now() + '_' + file.name.replace(/\s+/g, '_');
-    const { error: uploadError } = await sb.storage.from('galeri-foto').upload(path, file);
-    if (uploadError) {
-      alert('Gagal upload foto: ' + uploadError.message);
-      btn.textContent = 'Upload Foto'; btn.disabled = false;
-      return;
-    }
-    const { data: urlData } = sb.storage.from('galeri-foto').getPublicUrl(path);
-
-    const { error } = await sb.from('galeri').insert({
-      judul, tanggal: tanggal || null, keterangan,
-      foto_url: urlData.publicUrl, foto_path: path
-    });
-    btn.textContent = 'Upload Foto'; btn.disabled = false;
-    if (error) { alert('Gagal menyimpan data: ' + error.message); return; }
-
-    ['g_judul','g_tanggal','g_ket'].forEach(id => document.getElementById(id).value = '');
-    fileInput.value = '';
-    loadAdminGaleri();
-    loadGaleriPublik();
-  }
-  async function loadAdminGaleri() {
-    const { data, error } = await sb.from('galeri').select('*').order('tanggal', { ascending: false }).limit(30);
-    const el = document.getElementById('adminGaleriList');
-    if (error || !data) { el.innerHTML = ''; return; }
-    el.innerHTML = data.map(g => `
-      <div class="rounded-xl overflow-hidden border border-ungu-terang relative">
-        <img src="${g.foto_url}" alt="${g.judul}" class="w-full h-24 object-cover">
-        <button onclick="hapusGaleri('${g.id}','${g.foto_path}')" class="absolute top-1 right-1 bg-maroon text-white text-[10px] px-2 py-0.5 rounded-full">Hapus</button>
-        <p class="text-[10px] p-1 truncate">${g.judul}</p>
-      </div>
-    `).join('');
-  }
-  async function hapusGaleri(id, path) {
-    if (!confirm('Yakin ingin menghapus foto ini?')) return;
-    await sb.storage.from('galeri-foto').remove([path]);
-    const { error } = await sb.from('galeri').delete().eq('id', id);
-    if (error) { alert('Gagal menghapus: ' + error.message); return; }
-    loadAdminGaleri();
-    loadGaleriPublik();
-  }
-
-  // ================= STRUKTUR PENGURUS (PUBLIK) =================
-  async function loadStrukturPublik() {
-    const { data, error } = await sb.from('pengurus_struktur').select('*').order('kategori', { ascending: true }).order('urutan', { ascending: true });
-    const el = document.getElementById('strukturList');
-    if (error || !data || data.length === 0) {
-      el.innerHTML = '<p class="text-sm text-gray-400">Belum ada data struktur pengurus.</p>';
-      return;
-    }
-    const kategoriMap = {};
-    data.forEach(p => {
-      if (!kategoriMap[p.kategori]) kategoriMap[p.kategori] = [];
-      kategoriMap[p.kategori].push(p);
-    });
-    el.innerHTML = Object.keys(kategoriMap).map(kat => `
-      <div>
-        <p class="text-xs font-sub uppercase text-ungu-sedang mb-2 tracking-wider">${kat}</p>
-        <div class="space-y-2">
-          ${kategoriMap[kat].map(p => `
-            <div class="flex items-center justify-between border border-ungu-terang rounded-xl px-3 py-2.5">
-              <p class="text-sm font-medium">${p.nama}</p>
-              <p class="text-xs text-gray-500">${p.jabatan}</p>
+        <!-- ================= TAB 1: BERANDA ================= -- -->
+        <section id="tab-beranda" class="tab-content hidden space-y-6">
+            <!-- Pelayanan Hari Ini -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Pelayanan Hari Ini</h2>
+                <div id="pelayanan-hari-ini" class="space-y-3"></div>
             </div>
-          `).join('')}
-        </div>
-      </div>
-    `).join('');
-  }
 
-  // ================= STRUKTUR PENGURUS (ADMIN) =================
-  async function tambahStruktur() {
-    const payload = {
-      nama: document.getElementById('s_nama').value.trim(),
-      jabatan: document.getElementById('s_jabatan').value.trim(),
-      kategori: document.getElementById('s_kategori').value.trim(),
-      urutan: Number(document.getElementById('s_urutan').value) || 0
-    };
-    if (!payload.nama || !payload.jabatan || !payload.kategori) { alert('Nama, jabatan, dan kategori wajib diisi.'); return; }
-    const { error } = await sb.from('pengurus_struktur').insert(payload);
-    if (error) { alert('Gagal menyimpan: ' + error.message); return; }
-    ['s_nama','s_jabatan','s_kategori','s_urutan'].forEach(id => document.getElementById(id).value = '');
-    loadAdminStruktur();
-    loadStrukturPublik();
-  }
-  async function loadAdminStruktur() {
-    const { data, error } = await sb.from('pengurus_struktur').select('*').order('kategori', { ascending: true }).order('urutan', { ascending: true });
-    const el = document.getElementById('adminStrukturList');
-    if (error || !data) { el.innerHTML = ''; return; }
-    el.innerHTML = data.map(p => `
-      <div class="flex items-center justify-between border border-ungu-terang rounded-xl px-3 py-2.5">
-        <div>
-          <p class="text-sm font-medium">${p.nama} <span class="text-xs text-gray-400">— ${p.jabatan}</span></p>
-          <p class="text-xs text-ungu-sedang font-sub uppercase">${p.kategori}</p>
-        </div>
-        <button onclick="hapusData('pengurus_struktur','${p.id}')" class="text-maroon text-xs font-sub uppercase">Hapus</button>
-      </div>
-    `).join('');
-  }
+            <!-- Total Keuangan Bulan Ini -->
+            <div class="bg-gradient-to-br from-emerald-600 to-teal-700 p-5 rounded-xl shadow-md text-white">
+                <h2 class="text-xs font-medium uppercase tracking-wider opacity-80">Total Pemasukan Bulan Ini</h2>
+                <p id="total-pemasukan-bulan" class="text-3xl font-extrabold mt-1">Rp 0</p>
+            </div>
 
-  // ================= HAPUS DATA (UMUM) =================
-  async function hapusData(table, id) {
-    if (!confirm('Yakin ingin menghapus data ini?')) return;
-    const { error } = await sb.from(table).delete().eq('id', id);
-    if (error) { alert('Gagal menghapus: ' + error.message); return; }
-    if (table === 'jemaat') { loadAdminJemaat(); loadJemaatPublik(); }
-    if (table === 'keuangan') { loadAdminKeuangan(); loadKeuanganList(); loadRingkasanKeuangan(); }
-    if (table === 'jadwal') { loadAdminJadwal(); loadJadwal(); }
-    if (table === 'pengurus_struktur') { loadAdminStruktur(); loadStrukturPublik(); }
-  }
+            <!-- Berita / Info Terkini -->
+            <div class="space-y-3">
+                <h2 class="text-lg font-bold text-gray-950 px-1">Info Terkini</h2>
+                <div id="daftar-berita" class="space-y-3"></div>
+            </div>
+        </section>
 
-  // ================= INIT =================
-  (async function init() {
-    loadJadwal();
-    loadRingkasanKeuangan();
-    loadKeuanganList();
-    loadJemaatPublik();
-    loadGaleriPublik();
-    loadStrukturPublik();
-    await checkAdminStatus();
-  })();
-</script>
+        <!-- ================= TAB 2: JADWAL BULANAN ================= -- -->
+        <section id="tab-pelayanan" class="tab-content hidden space-y-4">
+            <h2 class="text-xl font-bold text-gray-950">Jadwal Pelayanan Sebulan</h2>
+            <div id="tabel-pelayanan-sebulan" class="space-y-3"></div>
+        </section>
+
+        <!-- ================= TAB 3: DEMOGRAFI JEMAAT ================= -- -->
+        <section id="tab-jemaat" class="tab-content hidden space-y-4">
+            <h2 class="text-xl font-bold text-gray-950">Demografi Jemaat</h2>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <span class="text-xs text-gray-400 block">Total Keluarga</span>
+                    <span id="stat-keluarga" class="text-2xl font-bold text-gray-800">0</span>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <span class="text-xs text-gray-400 block">Jumlah Jiwa</span>
+                    <span id="stat-jiwa" class="text-2xl font-bold text-gray-800">0</span>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <span class="text-xs text-gray-400 block">Laki-laki</span>
+                    <span id="stat-laki" class="text-xl font-semibold text-blue-600">0</span>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <span class="text-xs text-gray-400 block">Perempuan</span>
+                    <span id="stat-perempuan" class="text-xl font-semibold text-pink-600">0</span>
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-3">
+                <h3 class="text-sm font-bold text-gray-700 border-b pb-1">Kategori Usia</h3>
+                <div class="flex justify-between text-sm"><span>Anak-anak (0-16 thn)</span><span id="stat-anak" class="font-bold">0</span></div>
+                <div class="flex justify-between text-sm"><span>Pemuda (17-34 thn)</span><span id="stat-pemuda" class="font-bold">0</span></div>
+                <div class="flex justify-between text-sm"><span>Dewasa (35+ thn)</span><span id="stat-dewasa" class="font-bold">0</span></div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-3">
+                <h3 class="text-sm font-bold text-gray-700 border-b pb-1">Status Jemaat</h3>
+                <div class="flex justify-between text-sm"><span>Jemaat Tetap</span><span id="stat-tetap" class="font-bold text-emerald-600">0</span></div>
+                <div class="flex justify-between text-sm"><span>Simpatisan</span><span id="stat-simpatisan" class="font-bold text-amber-600">0</span></div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 4: LAPORAN KEUANGAN ================= -- -->
+        <section id="tab-keuangan" class="tab-content hidden space-y-4">
+            <h2 class="text-xl font-bold text-gray-950">Laporan Keuangan Lengkap</h2>
+            <div id="daftar-keuangan-lengkap" class="space-y-2"></div>
+        </section>
+
+    </main>
+
+    <!-- NAVIGASI BAWAH (MOBILE STYLE) -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg flex justify-around py-2 text-xs font-medium z-50 max-w-md mx-auto">
+        <button onclick="switchTab('beranda')" class="nav-btn flex flex-col items-center text-blue-900" id="btn-beranda">
+            <span class="text-lg">🏠</span><span>Beranda</span>
+        </button>
+        <button onclick="switchTab('pelayanan')" class="nav-btn flex flex-col items-center text-gray-400" id="btn-pelayanan">
+            <span class="text-lg">📅</span><span>Pelayanan</span>
+        </button>
+        <button onclick="switchTab('jemaat')" class="nav-btn flex flex-col items-center text-gray-400" id="btn-jemaat">
+            <span class="text-lg">👥</span><span>Jemaat</span>
+        </button>
+        <button onclick="switchTab('keuangan')" class="nav-btn flex flex-col items-center text-gray-400" id="btn-keuangan">
+            <span class="text-lg">💰</span><span>Keuangan</span>
+        </button>
+    </nav>
+
+    <!-- LOGIKA JAVASCRIPT & SUPABASE -->
+    <script>
+        // KREDENSIAL OTOMATIS BERDASARKAN PROYEK SUPABASE AMBON KOTA
+        const SUPABASE_URL = "https://udorycaiusvxsfxqoihg.supabase.co"; 
+        const SUPABASE_ANON_KEY = "sb_publishable_-4niJ-m4lAqwSgAiG9H0xQ_lxAEz"; 
+
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-btn').forEach(el => {
+                el.classList.remove('text-blue-900');
+                el.classList.add('text-gray-400');
+            });
+            document.getElementById('btn-' + tabId).classList.add('text-blue-900');
+            document.getElementById('btn-' + tabId).classList.remove('text-gray-400');
+        }
+
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(angka);
+        }
+
+        function getTodayDate() {
+            const d = new Date();
+            return d.toISOString().split('T')[0];
+        }
+
+        function getMonthRange() {
+            const date = new Date();
+            const y = date.getFullYear(), m = date.getMonth();
+            const firstDay = new Date(y, m, 1).toISOString().split('T')[0];
+            const lastDay = new Date(y, m + 1, 0).toISOString().split('T')[0];
+            return { firstDay, lastDay };
+        }
+
+        function calculateAge(birthDateString) {
+            const today = new Date();
+            const birthDate = new Date(birthDateString);
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        }
+
+        async function initApp() {
+            try {
+                document.getElementById('loading').classList.remove('hidden');
+                
+                await fetchBeranda();
+                await fetchPelayanan();
+                await fetchDemografi();
+                await fetchKeuanganLengkap();
+
+                document.getElementById('loading').classList.add('hidden');
+                switchTab('beranda');
+            } catch (error) {
+                console.error("Gagal memuat data:", error);
+                document.getElementById('loading').innerText = "❌ Terjadi kesalahan koneksi database.";
+            }
+        }
+
+        async function fetchBeranda() {
+            const today = getTodayDate();
+            
+            let { data: pelayananHariIni } = await supabaseClient
+                .from('pelayanan')
+                .select('*')
+                .gte('tanggal_waktu', today + 'T00:00:00')
+                .lte('tanggal_waktu', today + 'T23:59:59');
+
+            const containerPelayanan = document.getElementById('pelayanan-hari-ini');
+            if (pelayananHariIni && pelayananHariIni.length > 0) {
+                containerPelayanan.innerHTML = '';
+                pelayananHariIni.forEach(p => {
+                    const time = new Date(p.tanggal_waktu).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+                    containerPelayanan.innerHTML += `
+                        <div class="border-l-4 border-blue-900 pl-3 py-1">
+                            <p class="font-bold text-gray-900 text-sm">${p.nama_kegiatan} (${time} WIT)</p>
+                            <p class="text-xs text-gray-600">👤 Khotbah: ${p.pengkhotbah || '-'}</p>
+                            <p class="text-xs text-gray-600">📖 Liturgi: ${p.pelayan_liturgi || '-'}</p>
+                        </div>
+                    `;
+                });
+            } else {
+                containerPelayanan.innerHTML = `<div class="text-gray-400 text-center py-2 text-sm italic">Tidak ada jadwal pelayanan untuk hari ini.</div>`;
+            }
+
+            const { firstDay, lastDay } = getMonthRange();
+            let { data: kasBulanIni } = await supabaseClient
+                .from('keuangan')
+                .select('jumlah')
+                .eq('jenis_transaksi', 'Masuk')
+                .gte('tanggal', firstDay)
+                .lte('tanggal', lastDay);
+
+            let totalMasuk = 0;
+            if(kasBulanIni) {
+                totalMasuk = kasBulanIni.reduce((sum, item) => sum + parseFloat(item.jumlah), 0);
+            }
+            document.getElementById('total-pemasukan-bulan').innerText = formatRupiah(totalMasuk);
+
+            let { data: daftarBerita } = await supabaseClient
+                .from('berita')
+                .select('*')
+                .eq('aktif', true)
+                .order('tanggal_publikasi', { ascending: false });
+
+            const containerBerita = document.getElementById('daftar-berita');
+            containerBerita.innerHTML = '';
+            if(daftarBerita && daftarBerita.length > 0) {
+                daftarBerita.forEach(b => {
+                    containerBerita.innerHTML += `
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                            <h3 class="font-bold text-gray-900 text-base">${b.judul}</h3>
+                            <span class="text-[10px] text-gray-400 block mb-2">📅 ${b.tanggal_publikasi}</span>
+                            <p class="text-sm text-gray-600 leading-relaxed">${b.isi_konten}</p>
+                        </div>
+                    `;
+                });
+            } else {
+                containerBerita.innerHTML = '<p class="text-gray-400 text-sm italic text-center py-4">Belum ada informasi terbaru.</p>';
+            }
+        }
+
+        async function fetchPelayanan() {
+            const { firstDay, lastDay } = getMonthRange();
+            let { data: pelayananSebulan } = await supabaseClient
+                .from('pelayanan')
+                .select('*')
+                .gte('tanggal_waktu', firstDay + 'T00:00:00')
+                .lte('tanggal_waktu', lastDay + 'T23:59:59')
+                .order('tanggal_waktu', { ascending: true });
+
+            const container = document.getElementById('tabel-pelayanan-sebulan');
+            container.innerHTML = '';
+
+            if (pelayananSebulan && pelayananSebulan.length > 0) {
+                pelayananSebulan.forEach(p => {
+                    const dateObj = new Date(p.tanggal_waktu);
+                    const formattedDate = dateObj.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short' });
+                    const formattedTime = dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                    
+                    container.innerHTML += `
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-2">
+                            <div class="flex justify-between items-center border-b border-gray-50 pb-1">
+                                <span class="text-xs font-bold text-blue-900 bg-blue-50 px-2 py-0.5 rounded">${formattedDate}</span>
+                                <span class="text-xs text-gray-500 font-mono">🕒 ${formattedTime} WIT</span>
+                            </div>
+                            <h3 class="font-bold text-gray-900 text-sm">${p.nama_kegiatan}</h3>
+                            <div class="grid grid-cols-1 gap-0.5 text-xs text-gray-600">
+                                <p><strong>Pengkhotbah:</strong> ${p.pengkhotbah || '-'}</p>
+                                <p><strong>Liturgis/Pelayan:</strong> ${p.pelayan_liturgi || '-'}</p>
+                                ${p.keterangan ? `<p class="text-gray-400 italic mt-1">* ${p.keterangan}</p>` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                container.innerHTML = '<p class="text-gray-400 text-sm italic text-center py-4">Tidak ada jadwal pelayanan bulan ini.</p>';
+            }
+        }
+
+        async function fetchDemografi() {
+            let { data: semuaJemaat } = await supabaseClient.from('jemaat').select('*');
+            if (!semuaJemaat) return;
+
+            let jiwa = semuaJemaat.length;
+            let laki = 0, perempuan = 0, tetap = 0, simpatisan = 0;
+            let anak = 0, pemuda = 0, dewasa = 0;
+            let keluargaUnik = new Set();
+
+            semuaJemaat.forEach(j => {
+                if (j.jenis_kelamin === 'L') laki++;
+                if (j.jenis_kelamin === 'P') perempuan++;
+                if (j.status_keanggotaan === 'Tetap') tetap++;
+                if (j.status_keanggotaan === 'Simpatisan') simpatisan++;
+                if (j.id_keluarga) keluargaUnik.add(j.id_keluarga);
+
+                const umur = calculateAge(j.tanggal_lahir);
+                if (umur <= 16) anak++;
+                else if (umur >= 17 && umur <= 34) pemuda++;
+                else if (umur >= 35) dewasa++;
+            });
+
+            document.getElementById('stat-keluarga').innerText = keluargaUnik.size;
+            document.getElementById('stat-jiwa').innerText = jiwa;
+            document.getElementById('stat-laki').innerText = laki;
+            document.getElementById('stat-perempuan').innerText = perempuan;
+            document.getElementById('stat-anak').innerText = anak;
+            document.getElementById('stat-pemuda').innerText = pemuda;
+            document.getElementById('stat-dewasa').innerText = dewasa;
+            document.getElementById('stat-tetap').innerText = tetap;
+            document.getElementById('stat-simpatisan').innerText = simpatisan;
+        }
+
+        async function fetchKeuanganLengkap() {
+            let { data: riwayatKeuangan } = await supabaseClient
+                .from('keuangan')
+                .select('*')
+                .order('tanggal', { ascending: false });
+
+            const container = document.getElementById('daftar-keuangan-lengkap');
+            container.innerHTML = '';
+
+            if (riwayatKeuangan && riwayatKeuangan.length > 0) {
+                riwayatKeuangan.forEach(k => {
+                    const isMasuk = k.jenis_transaksi === 'Masuk';
+                    const badgeColor = isMasuk ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200';
+                    const tanda = isMasuk ? '+' : '-';
+
+                    container.innerHTML += `
+                        <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center">
+                            <div class="space-y-0.5">
+                                <span class="text-[10px] text-gray-400 font-mono">📅 ${k.tanggal}</span>
+                                <p class="text-sm font-semibold text-gray-900">${k.sumber_keterangan}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs px-2 py-0.5 rounded-full border font-bold ${badgeColor}">
+                                    ${tanda} ${formatRupiah(k.jumlah)}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                container.innerHTML = '<p class="text-gray-400 text-sm italic text-center py-4">Belum ada riwayat transaksi kas.</p>';
+            }
+        }
+
+        window.onload = initApp;
+    </script>
 </body>
 </html>
