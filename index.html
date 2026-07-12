@@ -109,6 +109,22 @@
     </div>
   </section>
 
+  <!-- VIEW: GALERI -->
+  <section id="view-galeri" class="view fade-in">
+    <h2 class="font-sub text-lg uppercase tracking-wide text-ungu-tua mb-3">Galeri Kegiatan</h2>
+    <div id="galeriList" class="grid grid-cols-2 gap-2">
+      <p class="text-sm text-gray-400 col-span-2">Memuat foto...</p>
+    </div>
+  </section>
+
+  <!-- VIEW: STRUKTUR PENGURUS -->
+  <section id="view-struktur" class="view fade-in">
+    <h2 class="font-sub text-lg uppercase tracking-wide text-ungu-tua mb-3">Susunan Pengurus</h2>
+    <div id="strukturList" class="space-y-4">
+      <p class="text-sm text-gray-400">Memuat data...</p>
+    </div>
+  </section>
+
   <!-- VIEW: ADMIN -->
   <section id="view-admin" class="view fade-in">
 
@@ -131,10 +147,12 @@
       </div>
 
       <!-- Sub tabs -->
-      <div class="flex gap-2 mb-4 text-xs font-sub uppercase">
+      <div class="flex gap-2 mb-4 text-xs font-sub uppercase flex-wrap">
         <button onclick="showAdminTab('jemaat')" id="atab-jemaat" class="admin-tab px-3 py-1.5 rounded-full bg-ungu-tua text-white">Jemaat</button>
         <button onclick="showAdminTab('keuangan')" id="atab-keuangan" class="admin-tab px-3 py-1.5 rounded-full bg-ungu-lembut text-ungu-tua">Keuangan</button>
         <button onclick="showAdminTab('jadwal')" id="atab-jadwal" class="admin-tab px-3 py-1.5 rounded-full bg-ungu-lembut text-ungu-tua">Jadwal</button>
+        <button onclick="showAdminTab('galeri')" id="atab-galeri" class="admin-tab px-3 py-1.5 rounded-full bg-ungu-lembut text-ungu-tua">Galeri</button>
+        <button onclick="showAdminTab('struktur')" id="atab-struktur" class="admin-tab px-3 py-1.5 rounded-full bg-ungu-lembut text-ungu-tua">Struktur</button>
       </div>
 
       <!-- Admin: Jemaat -->
@@ -190,6 +208,30 @@
         </div>
         <div id="adminJadwalList" class="space-y-2"></div>
       </div>
+
+      <!-- Admin: Galeri -->
+      <div id="admin-galeri" class="admin-panel space-y-2 hidden">
+        <div class="bg-ungu-lembut rounded-xl p-3 space-y-2 mb-3">
+          <input id="g_judul" placeholder="Judul foto/kegiatan" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
+          <input id="g_tanggal" type="date" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
+          <input id="g_ket" placeholder="Keterangan (opsional)" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
+          <input id="g_file" type="file" accept="image/*" class="w-full text-xs bg-white rounded-lg px-3 py-2">
+          <button onclick="tambahGaleri()" id="btnUploadGaleri" class="w-full bg-ungu-tua text-white font-sub uppercase text-xs py-2 rounded-lg">Upload Foto</button>
+        </div>
+        <div id="adminGaleriList" class="grid grid-cols-2 gap-2"></div>
+      </div>
+
+      <!-- Admin: Struktur Pengurus -->
+      <div id="admin-struktur" class="admin-panel space-y-2 hidden">
+        <div class="bg-ungu-lembut rounded-xl p-3 space-y-2 mb-3">
+          <input id="s_nama" placeholder="Nama" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
+          <input id="s_jabatan" placeholder="Jabatan (misal: Ketua Majelis)" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
+          <input id="s_kategori" placeholder="Kategori (misal: Majelis, Kaum Wanita, Pemuda)" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
+          <input id="s_urutan" type="number" placeholder="Urutan tampil (angka kecil di atas)" class="w-full border border-white rounded-lg px-3 py-2 text-sm">
+          <button onclick="tambahStruktur()" class="w-full bg-ungu-tua text-white font-sub uppercase text-xs py-2 rounded-lg">Simpan</button>
+        </div>
+        <div id="adminStrukturList" class="space-y-2"></div>
+      </div>
     </div>
   </section>
 
@@ -197,22 +239,30 @@
 
 <!-- BOTTOM NAV -->
 <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-ungu-terang z-40">
-  <div class="max-w-lg mx-auto grid grid-cols-4 text-center">
-    <button onclick="showView('beranda')" id="nav-beranda" class="nav-btn tab-active py-3 flex flex-col items-center gap-1">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg>
-      <span class="text-[10px] font-sub uppercase">Beranda</span>
+  <div class="max-w-lg mx-auto grid grid-cols-6 text-center">
+    <button onclick="showView('beranda')" id="nav-beranda" class="nav-btn tab-active py-2.5 flex flex-col items-center gap-1">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg>
+      <span class="text-[9px] font-sub uppercase">Beranda</span>
     </button>
-    <button onclick="showView('keuangan')" id="nav-keuangan" class="nav-btn tab-inactive py-3 flex flex-col items-center gap-1">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>
-      <span class="text-[10px] font-sub uppercase">Keuangan</span>
+    <button onclick="showView('keuangan')" id="nav-keuangan" class="nav-btn tab-inactive py-2.5 flex flex-col items-center gap-1">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>
+      <span class="text-[9px] font-sub uppercase">Keuangan</span>
     </button>
-    <button onclick="showView('jemaat')" id="nav-jemaat" class="nav-btn tab-inactive py-3 flex flex-col items-center gap-1">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3 3-5 7-5s7 2 7 5"/><circle cx="17" cy="9" r="2.5"/><path d="M22 20c0-2.5-2-4-4.5-4.3"/></svg>
-      <span class="text-[10px] font-sub uppercase">Jemaat</span>
+    <button onclick="showView('jemaat')" id="nav-jemaat" class="nav-btn tab-inactive py-2.5 flex flex-col items-center gap-1">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3 3-5 7-5s7 2 7 5"/><circle cx="17" cy="9" r="2.5"/><path d="M22 20c0-2.5-2-4-4.5-4.3"/></svg>
+      <span class="text-[9px] font-sub uppercase">Jemaat</span>
     </button>
-    <button onclick="showView('admin')" id="nav-admin" class="nav-btn tab-inactive py-3 flex flex-col items-center gap-1">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg>
-      <span class="text-[10px] font-sub uppercase">Pengurus</span>
+    <button onclick="showView('galeri')" id="nav-galeri" class="nav-btn tab-inactive py-2.5 flex flex-col items-center gap-1">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 16l-5-5-4 4-3-3-6 6"/></svg>
+      <span class="text-[9px] font-sub uppercase">Galeri</span>
+    </button>
+    <button onclick="showView('struktur')" id="nav-struktur" class="nav-btn tab-inactive py-2.5 flex flex-col items-center gap-1">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2.5"/><path d="M12 7.5v4"/><circle cx="6" cy="17" r="2.5"/><circle cx="12" cy="17" r="2.5"/><circle cx="18" cy="17" r="2.5"/><path d="M6 14.5v-3h12v3"/></svg>
+      <span class="text-[9px] font-sub uppercase">Struktur</span>
+    </button>
+    <button onclick="showView('admin')" id="nav-admin" class="nav-btn tab-inactive py-2.5 flex flex-col items-center gap-1">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg>
+      <span class="text-[9px] font-sub uppercase">Admin</span>
     </button>
   </div>
 </nav>
@@ -290,6 +340,8 @@
       loadAdminJemaat();
       loadAdminKeuangan();
       loadAdminJadwal();
+      loadAdminGaleri();
+      loadAdminStruktur();
     } else {
       const errEl = document.getElementById('loginError');
       errEl.textContent = 'Akun ini belum terdaftar sebagai pengurus.';
@@ -468,6 +520,138 @@
     `).join('');
   }
 
+  // ================= GALERI (PUBLIK) =================
+  async function loadGaleriPublik() {
+    const { data, error } = await sb.from('galeri').select('*').order('tanggal', { ascending: false }).limit(30);
+    const el = document.getElementById('galeriList');
+    if (error || !data || data.length === 0) {
+      el.innerHTML = '<p class="text-sm text-gray-400 col-span-2">Belum ada foto kegiatan.</p>';
+      return;
+    }
+    el.innerHTML = data.map(g => `
+      <div class="rounded-xl overflow-hidden border border-ungu-terang">
+        <img src="${g.foto_url}" alt="${g.judul}" class="w-full h-28 object-cover">
+        <div class="p-2">
+          <p class="text-xs font-medium leading-tight">${g.judul}</p>
+          <p class="text-[10px] text-gray-400">${formatTanggal(g.tanggal)}</p>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ================= GALERI (ADMIN) =================
+  async function tambahGaleri() {
+    const judul = document.getElementById('g_judul').value.trim();
+    const tanggal = document.getElementById('g_tanggal').value;
+    const keterangan = document.getElementById('g_ket').value.trim();
+    const fileInput = document.getElementById('g_file');
+    const file = fileInput.files[0];
+    if (!judul || !file) { alert('Judul dan file foto wajib diisi.'); return; }
+
+    const btn = document.getElementById('btnUploadGaleri');
+    btn.textContent = 'Mengunggah...';
+    btn.disabled = true;
+
+    const path = Date.now() + '_' + file.name.replace(/\s+/g, '_');
+    const { error: uploadError } = await sb.storage.from('galeri-foto').upload(path, file);
+    if (uploadError) {
+      alert('Gagal upload foto: ' + uploadError.message);
+      btn.textContent = 'Upload Foto'; btn.disabled = false;
+      return;
+    }
+    const { data: urlData } = sb.storage.from('galeri-foto').getPublicUrl(path);
+
+    const { error } = await sb.from('galeri').insert({
+      judul, tanggal: tanggal || null, keterangan,
+      foto_url: urlData.publicUrl, foto_path: path
+    });
+    btn.textContent = 'Upload Foto'; btn.disabled = false;
+    if (error) { alert('Gagal menyimpan data: ' + error.message); return; }
+
+    ['g_judul','g_tanggal','g_ket'].forEach(id => document.getElementById(id).value = '');
+    fileInput.value = '';
+    loadAdminGaleri();
+    loadGaleriPublik();
+  }
+  async function loadAdminGaleri() {
+    const { data, error } = await sb.from('galeri').select('*').order('tanggal', { ascending: false }).limit(30);
+    const el = document.getElementById('adminGaleriList');
+    if (error || !data) { el.innerHTML = ''; return; }
+    el.innerHTML = data.map(g => `
+      <div class="rounded-xl overflow-hidden border border-ungu-terang relative">
+        <img src="${g.foto_url}" alt="${g.judul}" class="w-full h-24 object-cover">
+        <button onclick="hapusGaleri('${g.id}','${g.foto_path}')" class="absolute top-1 right-1 bg-maroon text-white text-[10px] px-2 py-0.5 rounded-full">Hapus</button>
+        <p class="text-[10px] p-1 truncate">${g.judul}</p>
+      </div>
+    `).join('');
+  }
+  async function hapusGaleri(id, path) {
+    if (!confirm('Yakin ingin menghapus foto ini?')) return;
+    await sb.storage.from('galeri-foto').remove([path]);
+    const { error } = await sb.from('galeri').delete().eq('id', id);
+    if (error) { alert('Gagal menghapus: ' + error.message); return; }
+    loadAdminGaleri();
+    loadGaleriPublik();
+  }
+
+  // ================= STRUKTUR PENGURUS (PUBLIK) =================
+  async function loadStrukturPublik() {
+    const { data, error } = await sb.from('pengurus_struktur').select('*').order('kategori', { ascending: true }).order('urutan', { ascending: true });
+    const el = document.getElementById('strukturList');
+    if (error || !data || data.length === 0) {
+      el.innerHTML = '<p class="text-sm text-gray-400">Belum ada data struktur pengurus.</p>';
+      return;
+    }
+    const kategoriMap = {};
+    data.forEach(p => {
+      if (!kategoriMap[p.kategori]) kategoriMap[p.kategori] = [];
+      kategoriMap[p.kategori].push(p);
+    });
+    el.innerHTML = Object.keys(kategoriMap).map(kat => `
+      <div>
+        <p class="text-xs font-sub uppercase text-ungu-sedang mb-2 tracking-wider">${kat}</p>
+        <div class="space-y-2">
+          ${kategoriMap[kat].map(p => `
+            <div class="flex items-center justify-between border border-ungu-terang rounded-xl px-3 py-2.5">
+              <p class="text-sm font-medium">${p.nama}</p>
+              <p class="text-xs text-gray-500">${p.jabatan}</p>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ================= STRUKTUR PENGURUS (ADMIN) =================
+  async function tambahStruktur() {
+    const payload = {
+      nama: document.getElementById('s_nama').value.trim(),
+      jabatan: document.getElementById('s_jabatan').value.trim(),
+      kategori: document.getElementById('s_kategori').value.trim(),
+      urutan: Number(document.getElementById('s_urutan').value) || 0
+    };
+    if (!payload.nama || !payload.jabatan || !payload.kategori) { alert('Nama, jabatan, dan kategori wajib diisi.'); return; }
+    const { error } = await sb.from('pengurus_struktur').insert(payload);
+    if (error) { alert('Gagal menyimpan: ' + error.message); return; }
+    ['s_nama','s_jabatan','s_kategori','s_urutan'].forEach(id => document.getElementById(id).value = '');
+    loadAdminStruktur();
+    loadStrukturPublik();
+  }
+  async function loadAdminStruktur() {
+    const { data, error } = await sb.from('pengurus_struktur').select('*').order('kategori', { ascending: true }).order('urutan', { ascending: true });
+    const el = document.getElementById('adminStrukturList');
+    if (error || !data) { el.innerHTML = ''; return; }
+    el.innerHTML = data.map(p => `
+      <div class="flex items-center justify-between border border-ungu-terang rounded-xl px-3 py-2.5">
+        <div>
+          <p class="text-sm font-medium">${p.nama} <span class="text-xs text-gray-400">— ${p.jabatan}</span></p>
+          <p class="text-xs text-ungu-sedang font-sub uppercase">${p.kategori}</p>
+        </div>
+        <button onclick="hapusData('pengurus_struktur','${p.id}')" class="text-maroon text-xs font-sub uppercase">Hapus</button>
+      </div>
+    `).join('');
+  }
+
   // ================= HAPUS DATA (UMUM) =================
   async function hapusData(table, id) {
     if (!confirm('Yakin ingin menghapus data ini?')) return;
@@ -476,6 +660,7 @@
     if (table === 'jemaat') { loadAdminJemaat(); loadJemaatPublik(); }
     if (table === 'keuangan') { loadAdminKeuangan(); loadKeuanganList(); loadRingkasanKeuangan(); }
     if (table === 'jadwal') { loadAdminJadwal(); loadJadwal(); }
+    if (table === 'pengurus_struktur') { loadAdminStruktur(); loadStrukturPublik(); }
   }
 
   // ================= INIT =================
@@ -484,6 +669,8 @@
     loadRingkasanKeuangan();
     loadKeuanganList();
     loadJemaatPublik();
+    loadGaleriPublik();
+    loadStrukturPublik();
     await checkAdminStatus();
   })();
 </script>
