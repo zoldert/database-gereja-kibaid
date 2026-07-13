@@ -45,21 +45,37 @@
             ⏳ Memuat data jemaat...
         </div>
 
-        <!-- ================= SECTION 1: PELAYANAN HARI INI ================= -->
-        <section class="space-y-4">
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                <h2 class="text-xs font-bold text-purple-700 uppercase tracking-widest mb-3">Pelayanan Hari Ini</h2>
-                <div id="pelayanan-hari-ini" class="space-y-3"></div>
-            </div>
-        </section>
-
-        <!-- ================= SECTION 2: INFO TERKINI / BERITA ================= -->
+        <!-- ================= 1. INFO TERKINI / BERITA ================= -->
         <section class="space-y-3">
             <h2 class="text-lg font-black font-serif-pairing text-purple-950 border-b-2 border-purple-200 pb-1 px-1">Info Terkini</h2>
             <div id="daftar-berita" class="space-y-3"></div>
         </section>
 
-        <!-- ================= SECTION 3: DEMOGRAFI JEMAAT ================= -->
+        <!-- ================= 2. WARTA HARI INI ================= -->
+        <section class="space-y-4">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                <h2 class="text-xs font-bold text-purple-700 uppercase tracking-widest mb-3">Warta Hari Ini</h2>
+                <div id="pelayanan-hari-ini" class="space-y-3"></div>
+            </div>
+        </section>
+
+        <!-- ================= 3. GALERI FOTO KEGIATAN ================= -->
+        <section class="space-y-3">
+            <h2 class="text-lg font-black font-serif-pairing text-purple-950 border-b-2 border-purple-200 pb-1 px-1">Galeri Kegiatan</h2>
+            <div id="grid-galeri" class="grid grid-cols-2 gap-3">
+                <!-- Grid Foto Dinamis -->
+            </div>
+        </section>
+
+        <!-- ================= 4. PENGURUS MAJELIS JEMAAT ================= -->
+        <section class="space-y-3">
+            <h2 class="text-lg font-black font-serif-pairing text-purple-950 border-b-2 border-purple-200 pb-1 px-1">Majelis Jemaat</h2>
+            <div id="daftar-majelis" class="grid grid-cols-1 gap-2">
+                <!-- Data Nama Bawaan Dinamis -->
+            </div>
+        </section>
+
+        <!-- ================= 5. DEMOGRAFI JEMAAT ================= -->
         <section class="space-y-4">
             <h2 class="text-lg font-black font-serif-pairing text-purple-950 border-b-2 border-purple-200 pb-1 px-1">Demografi Jemaat</h2>
             
@@ -93,22 +109,6 @@
                 <h3 class="text-sm font-bold text-purple-900 border-b pb-1">Status Jemaat</h3>
                 <div class="flex justify-between text-sm"><span>Jemaat Tetap</span><span id="stat-tetap" class="font-bold text-emerald-600">0</span></div>
                 <div class="flex justify-between text-sm"><span>Simpatisan</span><span id="stat-simpatisan" class="font-bold text-amber-600">0</span></div>
-            </div>
-        </section>
-
-        <!-- ================= SECTION 4: PENGURUS MAJELIS JEMAAT ================= -->
-        <section class="space-y-3">
-            <h2 class="text-lg font-black font-serif-pairing text-purple-950 border-b-2 border-purple-200 pb-1 px-1">Majelis Jemaat</h2>
-            <div id="daftar-majelis" class="grid grid-cols-1 gap-2">
-                <!-- Data Nama Bawaan Dinamis -->
-            </div>
-        </section>
-
-        <!-- ================= SECTION 5: GALERI FOTO KEGIATAN ================= -->
-        <section class="space-y-3">
-            <h2 class="text-lg font-black font-serif-pairing text-purple-950 border-b-2 border-purple-200 pb-1 px-1">Galeri Kegiatan</h2>
-            <div id="grid-galeri" class="grid grid-cols-2 gap-3">
-                <!-- Grid Foto Dinamis -->
             </div>
         </section>
 
@@ -153,11 +153,11 @@
                 updateHeaderDate();
                 document.getElementById('loading').classList.remove('hidden');
                 
-                await fetchPelayananHariIni();
                 await fetchBerita();
-                await fetchDemografi();
-                await fetchMajelis();
+                await fetchPelayananHariIni();
                 await fetchGaleri();
+                await fetchMajelis();
+                await fetchDemografi();
 
                 document.getElementById('loading').classList.add('hidden');
             } catch (error) {
@@ -189,7 +189,7 @@
                     `;
                 });
             } else {
-                containerPelayanan.innerHTML = `<div class="text-gray-400 text-center py-2 text-sm italic">Tidak ada jadwal pelayanan untuk hari ini.</div>`;
+                containerPelayanan.innerHTML = `<div class="text-gray-400 text-center py-2 text-sm italic">Tidak ada jadwal pelayanan atau warta untuk hari ini.</div>`;
             }
         }
 
@@ -269,7 +269,7 @@
                     `;
                 });
             } else {
-                container.innerHTML = '<p class="text-gray-400 text-sm italic text-center py-2">Data pengurus belum dimasukkan.</p>';
+                container.innerHTML = '<p class="text-gray-400 text-sm italic text-center py-2">Data pengurus majelis belum dimasukkan.</p>';
             }
         }
 
