@@ -55,7 +55,7 @@
         <section class="space-y-4">
             <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                 <h2 class="text-xs font-bold text-purple-700 uppercase tracking-widest mb-3">Warta Hari Ini</h2>
-                <div id="pelayanan-hari-ini" class="space-y-3"></div>
+                <div id="pelayanan-hari-ini" class="space-y-4"></div>
             </div>
         </section>
 
@@ -79,15 +79,12 @@
         <section class="space-y-4">
             <h2 class="text-lg font-black font-serif-pairing text-purple-950 border-b-2 border-purple-200 pb-1 px-1">Demografi Jemaat</h2>
             
-            <!-- DENGAN TAMBAHAN BLOK SELAMAT ULANG TAHUN (HANYA MUNCUL JIKA ADA YG ULTAN) -->
             <div id="box-ulang-tahun" class="hidden bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-4 rounded-2xl shadow-md text-white space-y-2 animate-pulse">
                 <div class="flex items-center gap-2">
                     <span class="text-xl">🎂</span>
                     <h3 class="text-xs font-black uppercase tracking-widest text-purple-950">Selamat Ulang Tahun!</h3>
                 </div>
-                <div id="list-jemaat-ultah" class="text-sm font-bold bg-white/20 p-2 rounded-xl text-purple-950 leading-relaxed">
-                    <!-- Nama jemaat ultah di sini -->
-                </div>
+                <div id="list-jemaat-ultah" class="text-sm font-bold bg-white/20 p-2 rounded-xl text-purple-950 leading-relaxed"></div>
                 <p class="text-[10px] italic text-purple-900 font-medium">"Tuhan memberkati umur panjang dan pelayananmu."</p>
             </div>
 
@@ -193,10 +190,22 @@
                 pelayananHariIni.forEach(p => {
                     const time = new Date(p.tanggal_waktu).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
                     containerPelayanan.innerHTML += `
-                        <div class="border-l-4 border-purple-600 pl-3 py-1">
-                            <p class="font-bold text-gray-950 text-sm font-serif-pairing">${p.nama_kegiatan} (${time} WIT)</p>
-                            <p class="text-xs text-gray-600">👤 Khotbah: ${p.pengkhotbah || '-'}</p>
-                            <p class="text-xs text-gray-600">📖 Liturgi: ${p.pelayan_liturgi || '-'}</p>
+                        <div class="border-b border-gray-150 pb-4 last:border-0 last:pb-0 space-y-2">
+                            <div class="border-l-4 border-purple-600 pl-3">
+                                <p class="font-bold text-gray-950 text-sm font-serif-pairing">${p.nama_kegiatan} (${time} WIT)</p>
+                                ${p.keterangan ? `<p class="text-[11px] text-purple-700 italic mt-0.5">* ${p.keterangan}</p>` : ''}
+                            </div>
+                            <div class="grid grid-cols-1 gap-1 text-xs text-gray-600 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                <p><strong>👤 Khotbah:</strong> ${p.pengkhotbah || '-'}</p>
+                                <p><strong>📖 Liturgis/Pelayan:</strong> ${p.pelayan_liturgi || '-'}</p>
+                                <p><strong>🎹 Pemusik:</strong> ${p.pemusik || '-'}</p>
+                                <p><strong>🙏 Pendoa Syafaat:</strong> ${p.pendoa_syafaat || '-'}</p>
+                                <p><strong>💰 Kolektan:</strong> ${p.kolektan || '-'}</p>
+                                <p><strong>🖥️ Operator LCD:</strong> ${p.operator_lcd || '-'}</p>
+                                <p><strong>🤲 Doa Persembahan:</strong> ${p.doa_persembahan || '-'}</p>
+                                <p><strong>📢 Pembaca Warta:</strong> ${p.pembaca_warta || '-'}</p>
+                                <p><strong>🤝 Penyambut Jemaat:</strong> ${p.penyambut_jemaat || '-'}</p>
+                            </div>
                         </div>
                     `;
                 });
@@ -238,7 +247,6 @@
             let anak = 0, pemuda = 0, dewasa = 0;
             let keluargaUnik = new Set();
             
-            // Variabel tampung jemaat ultah hari ini
             let jemaatUltahHariIni = [];
             const today = new Date();
             const todayMonth = today.getMonth();
@@ -256,14 +264,12 @@
                 else if (umur >= 17 && umur <= 34) pemuda++;
                 else if (umur >= 35) dewasa++;
 
-                // LOGIKA COCOKKAN HARI ULANG TAHUN
                 const birthDate = new Date(j.tanggal_lahir);
                 if (birthDate.getMonth() === todayMonth && birthDate.getDate() === todayDate) {
                     jemaatUltahHariIni.push(`${j.nama_lengkap} (${umur + 1} Thn)`);
                 }
             });
 
-            // TAMPILKAN ATAU SEMBUNYIKAN BOX ULANG TAHUN
             const boxUltah = document.getElementById('box-ulang-tahun');
             const listUltah = document.getElementById('list-jemaat-ultah');
             if (jemaatUltahHariIni.length > 0) {
