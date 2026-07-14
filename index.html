@@ -135,11 +135,6 @@
 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        function getTodayDate() {
-            const d = new Date();
-            return d.toISOString().split('T')[0];
-        }
-
         function updateHeaderDate() {
             const d = new Date();
             const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
@@ -176,40 +171,53 @@
         }
 
         async function fetchPelayananHariIni() {
-            const today = getTodayDate();
-            
-            let { data: pelayananHariIni } = await supabaseClient
+            // Ambil seluruh data pelayanan tanpa dibatasi filter jam UTC Supabase yang ketat
+            let { data: semuaPelayanan } = await supabaseClient
                 .from('pelayanan')
-                .select('*')
-                .gte('tanggal_waktu', today + 'T00:00:00')
-                .lte('tanggal_waktu', today + 'T23:59:59');
+                .select('*');
 
             const containerPelayanan = document.getElementById('pelayanan-hari-ini');
-            if (pelayananHariIni && pelayananHariIni.length > 0) {
-                containerPelayanan.innerHTML = '';
-                pelayananHariIni.forEach(p => {
-                    const time = new Date(p.tanggal_waktu).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
-                    containerPelayanan.innerHTML += `
-                        <div class="border-b border-gray-150 pb-4 last:border-0 last:pb-0 space-y-2">
-                            <div class="border-l-4 border-purple-600 pl-3">
-                                <p class="font-bold text-gray-950 text-sm font-serif-pairing">${p.nama_kegiatan} (${time} WIT)</p>
-                                ${p.keterangan ? `<p class="text-[11px] text-purple-700 italic mt-0.5">* ${p.keterangan}</p>` : ''}
+            containerPelayanan.innerHTML = '';
+
+            // Cari tanggal hari ini berdasarkan zona waktu lokal HP user
+            const localTodayStr = new Date().toLocaleDateString('en-CA'); // Hasil: "YYYY-MM-DD"
+
+            let adaJadwal = false;
+
+            if (semuaPelayanan && semuaPelayanan.length > 0) {
+                semuaPelayanan.forEach(p => {
+                    const dateObj = new Date(p.tanggal_waktu);
+                    const itemDateStr = dateObj.toLocaleDateString('en-CA'); // Konversi waktu record ke string "YYYY-MM-DD"
+
+                    // Validasi: Jika tanggal record COCOK dengan tanggal lokal hari ini
+                    if (itemDateStr === localTodayStr) {
+                        adaJadwal = true;
+                        const time = dateObj.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+                        
+                        containerPelayanan.innerHTML += `
+                            <div class="border-b border-gray-150 pb-4 last:border-0 last:pb-0 space-y-2">
+                                <div class="border-l-4 border-purple-600 pl-3">
+                                    <p class="font-bold text-gray-950 text-sm font-serif-pairing">${p.nama_kegiatan} (${time} WIT)</p>
+                                    ${p.keterangan ? `<p class="text-[11px] text-purple-700 italic mt-0.5">* ${p.keterangan}</p>` : ''}
+                                </div>
+                                <div class="grid grid-cols-1 gap-1 text-xs text-gray-600 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                    <p><strong>👤 Khotbah:</strong> ${p.pengkhotbah || '-'}</p>
+                                    <p><strong>📖 Liturgis/Pelayan:</strong> ${p.pelayan_liturgi || '-'}</p>
+                                    <p><strong>🎹 Pemusik:</strong> ${p.pemusik || '-'}</p>
+                                    <p><strong>🙏 Pendoa Syafaat:</strong> ${p.pendoa_syafaat || '-'}</p>
+                                    <p><strong>💰 Kolektan:</strong> ${p.kolektan || '-'}</p>
+                                    <p><strong>🖥️ Operator LCD:</strong> ${p.operator_lcd || '-'}</p>
+                                    <p><strong>🤲 Doa Persembahan:</strong> ${p.doa_persembahan || '-'}</p>
+                                    <p><strong>📢 Pembaca Warta:</strong> ${p.pembaca_warta || '-'}</p>
+                                    <p><strong>🤝 Penyambut Jemaat:</strong> ${p.penyambut_jemaat || '-'}</p>
+                                </div>
                             </div>
-                            <div class="grid grid-cols-1 gap-1 text-xs text-gray-600 bg-gray-50 p-3 rounded-xl border border-gray-100">
-                                <p><strong>👤 Khotbah:</strong> ${p.pengkhotbah || '-'}</p>
-                                <p><strong>📖 Liturgis/Pelayan:</strong> ${p.pelayan_liturgi || '-'}</p>
-                                <p><strong>🎹 Pemusik:</strong> ${p.pemusik || '-'}</p>
-                                <p><strong>🙏 Pendoa Syafaat:</strong> ${p.pendoa_syafaat || '-'}</p>
-                                <p><strong>💰 Kolektan:</strong> ${p.kolektan || '-'}</p>
-                                <p><strong>🖥️ Operator LCD:</strong> ${p.operator_lcd || '-'}</p>
-                                <p><strong>🤲 Doa Persembahan:</strong> ${p.doa_persembahan || '-'}</p>
-                                <p><strong>📢 Pembaca Warta:</strong> ${p.pembaca_warta || '-'}</p>
-                                <p><strong>🤝 Penyambut Jemaat:</strong> ${p.penyambut_jemaat || '-'}</p>
-                            </div>
-                        </div>
-                    `;
+                        `;
+                    }
                 });
-            } else {
+            }
+
+            if (!adaJadwal) {
                 containerPelayanan.innerHTML = `<div class="text-gray-400 text-center py-2 text-sm italic">Tidak ada jadwal pelayanan atau warta untuk hari ini.</div>`;
             }
         }
