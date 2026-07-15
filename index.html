@@ -128,7 +128,6 @@
 
     <!-- LOGIKA JAVASCRIPT & GOOGLE SHEETS VIA SHEETDB -->
     <script>
-        // URL API SheetDB yang sudah terintegrasi
         const SHEETDB_API_URL = "https://sheetdb.io/api/v1/oq2dn8eyynehu"; 
 
         function updateHeaderDate() {
@@ -154,7 +153,6 @@
                 updateHeaderDate();
                 document.getElementById('loading').classList.remove('hidden');
                 
-                // Mengambil data terpisah berdasarkan nama tab sheet di Google Sheets
                 const [resBerita, resPelayanan, resGaleri, resMajelis, resJemaat] = await Promise.all([
                     fetch(`${SHEETDB_API_URL}?sheet=berita`).then(r => r.json()),
                     fetch(`${SHEETDB_API_URL}?sheet=pelayanan`).then(r => r.json()),
@@ -206,15 +204,15 @@
                                     ${p.keterangan ? `<p class="text-[11px] text-purple-700 italic mt-0.5">* ${p.keterangan}</p>` : ''}
                                 </div>
                                 <div class="grid grid-cols-1 gap-1 text-xs text-gray-600 bg-gray-50 p-3 rounded-xl border border-gray-100">
-                                    <p><strong>👤 Khotbah:</strong> ${p.pengkhotbah || '-'}</p>
-                                    <p><strong>📖 Liturgis/Pelayan:</strong> ${p.pelayan_liturgi || '-'}</p>
-                                    <p><strong>🎹 Pemusik:</strong> ${p.pemusik || '-'}</p>
-                                    <p><strong>🙏 Pendoa Syafaat:</strong> ${p.pendoa_syafaat || '-'}</p>
-                                    <p><strong>💰 Kolektan:</strong> ${p.kolektan || '-'}</p>
-                                    <p><strong>🖥️ Operator LCD:</strong> ${p.operator_lcd || '-'}</p>
-                                    <p><strong>🤲 Doa Persembahan:</strong> ${p.doa_persembahan || '-'}</p>
-                                    <p><strong>📢 Pembaca Warta:</strong> ${p.pembaca_warta || '-'}</p>
-                                    <p><strong>🤝 Penyambut Jemaat:</strong> ${p.penyambut_jemaat || '-'}</p>
+                                    <p>- <strong>Khotbah:</strong> ${p.pengkhotbah || '-'}</p>
+                                    <p>- <strong>Liturgis/Pelayan:</strong> ${p.pelayan_liturgi || '-'}</p>
+                                    <p>- <strong>Pemusik:</strong> ${p.pemusik || '-'}</p>
+                                    <p>- <strong>Pendoa Syafaat:</strong> ${p.pendoa_syafaat || '-'}</p>
+                                    <p>- <strong>Kolektan:</strong> ${p.kolektan || '-'}</p>
+                                    <p>- <strong>Operator LCD:</strong> ${p.operator_lcd || '-'}</p>
+                                    <p>- <strong>Doa Persembahan:</strong> ${p.doa_persembahan || '-'}</p>
+                                    <p>- <strong>Pembaca Warta:</strong> ${p.pembaca_warta || '-'}</p>
+                                    <p>- <strong>Penyambut Jemaat:</strong> ${p.penyambut_jemaat || '-'}</p>
                                 </div>
                             </div>
                         `;
