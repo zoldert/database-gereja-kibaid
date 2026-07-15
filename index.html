@@ -171,7 +171,6 @@
         }
 
         async function fetchPelayananHariIni() {
-            // Ambil seluruh data pelayanan tanpa dibatasi filter jam UTC Supabase yang ketat
             let { data: semuaPelayanan } = await supabaseClient
                 .from('pelayanan')
                 .select('*');
@@ -179,18 +178,23 @@
             const containerPelayanan = document.getElementById('pelayanan-hari-ini');
             containerPelayanan.innerHTML = '';
 
-            // Cari tanggal hari ini berdasarkan zona waktu lokal HP user
-            const localTodayStr = new Date().toLocaleDateString('en-CA'); // Hasil: "YYYY-MM-DD"
+            // Ambil info Hari, Bulan, dan Tahun lokal saat ini
+            const hariIni = new Date();
+            const localDay = hariIni.getDate();
+            const localMonth = hariIni.getMonth();
+            const localYear = hariIni.getFullYear();
 
             let adaJadwal = false;
 
             if (semuaPelayanan && semuaPelayanan.length > 0) {
                 semuaPelayanan.forEach(p => {
                     const dateObj = new Date(p.tanggal_waktu);
-                    const itemDateStr = dateObj.toLocaleDateString('en-CA'); // Konversi waktu record ke string "YYYY-MM-DD"
-
-                    // Validasi: Jika tanggal record COCOK dengan tanggal lokal hari ini
-                    if (itemDateStr === localTodayStr) {
+                    
+                    // Validasi kecocokan Kalender Ibadah secara mandiri
+                    if (dateObj.getDate() === localDay && 
+                        dateObj.getMonth() === localMonth && 
+                        dateObj.getFullYear() === localYear) {
+                        
                         adaJadwal = true;
                         const time = dateObj.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
                         
