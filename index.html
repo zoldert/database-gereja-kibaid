@@ -6,8 +6,6 @@
     <title>Database Gereja KIBAID</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Supabase JS Library -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Google Fonts: Open Sans & Playfair Display -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -128,12 +126,10 @@
         &copy; 2026 GEREJA KIBAID JEMAAT AMBON KOTA. All Rights Reserved.
     </footer>
 
-    <!-- LOGIKA JAVASCRIPT & SUPABASE INTERACTION -->
+    <!-- LOGIKA JAVASCRIPT & GOOGLE SHEETS VIA SHEETDB -->
     <script>
-        const SUPABASE_URL = "https://udorycaiusvxsfxqoihg.supabase.co"; 
-        const SUPABASE_ANON_KEY = "sb_publishable_-4niJ-m4lAqwSgAiG9H0xQ_lxAEz"; 
-
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // URL API SheetDB yang sudah terintegrasi
+        const SHEETDB_API_URL = "https://sheetdb.io/api/v1/oq2dn8eyynehu"; 
 
         function updateHeaderDate() {
             const d = new Date();
@@ -142,6 +138,7 @@
         }
 
         function calculateAge(birthDateString) {
+            if(!birthDateString) return 0;
             const today = new Date();
             const birthDate = new Date(birthDateString);
             let age = today.getFullYear() - birthDate.getFullYear();
@@ -157,28 +154,32 @@
                 updateHeaderDate();
                 document.getElementById('loading').classList.remove('hidden');
                 
-                await fetchBerita();
-                await fetchPelayananHariIni();
-                await fetchGaleri();
-                await fetchMajelis();
-                await fetchDemografi();
+                // Mengambil data terpisah berdasarkan nama tab sheet di Google Sheets
+                const [resBerita, resPelayanan, resGaleri, resMajelis, resJemaat] = await Promise.all([
+                    fetch(`${SHEETDB_API_URL}?sheet=berita`).then(r => r.json()),
+                    fetch(`${SHEETDB_API_URL}?sheet=pelayanan`).then(r => r.json()),
+                    fetch(`${SHEETDB_API_URL}?sheet=galeri`).then(r => r.json()),
+                    fetch(`${SHEETDB_API_URL}?sheet=majelis`).then(r => r.json()),
+                    fetch(`${SHEETDB_API_URL}?sheet=jemaat`).then(r => r.json())
+                ]);
+
+                renderBerita(resBerita);
+                renderPelayanan(resPelayanan);
+                renderGaleri(resGaleri);
+                renderMajelis(resMajelis);
+                renderDemografiAndUltah(resJemaat);
 
                 document.getElementById('loading').classList.add('hidden');
             } catch (error) {
-                console.error("Gagal memuat data:", error);
-                document.getElementById('loading').innerText = "❌ Terjadi kesalahan koneksi database.";
+                console.error("Gagal memuat data Google Sheets:", error);
+                document.getElementById('loading').innerText = "❌ Hubungan koneksi Google Sheets terputus.";
             }
         }
 
-        async function fetchPelayananHariIni() {
-            let { data: semuaPelayanan } = await supabaseClient
-                .from('pelayanan')
-                .select('*');
+        function renderPelayanan(data) {
+            const container = document.getElementById('pelayanan-hari-ini');
+            container.innerHTML = '';
 
-            const containerPelayanan = document.getElementById('pelayanan-hari-ini');
-            containerPelayanan.innerHTML = '';
-
-            // Ambil info Hari, Bulan, dan Tahun lokal saat ini
             const hariIni = new Date();
             const localDay = hariIni.getDate();
             const localMonth = hariIni.getMonth();
@@ -186,11 +187,11 @@
 
             let adaJadwal = false;
 
-            if (semuaPelayanan && semuaPelayanan.length > 0) {
-                semuaPelayanan.forEach(p => {
+            if (Array.isArray(data) && data.length > 0) {
+                data.forEach(p => {
+                    if(!p.tanggal_waktu) return;
                     const dateObj = new Date(p.tanggal_waktu);
                     
-                    // Validasi kecocokan Kalender Ibadah secara mandiri
                     if (dateObj.getDate() === localDay && 
                         dateObj.getMonth() === localMonth && 
                         dateObj.getFullYear() === localYear) {
@@ -198,7 +199,7 @@
                         adaJadwal = true;
                         const time = dateObj.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
                         
-                        containerPelayanan.innerHTML += `
+                        container.innerHTML += `
                             <div class="border-b border-gray-150 pb-4 last:border-0 last:pb-0 space-y-2">
                                 <div class="border-l-4 border-purple-600 pl-3">
                                     <p class="font-bold text-gray-950 text-sm font-serif-pairing">${p.nama_kegiatan} (${time} WIT)</p>
@@ -222,39 +223,38 @@
             }
 
             if (!adaJadwal) {
-                containerPelayanan.innerHTML = `<div class="text-gray-400 text-center py-2 text-sm italic">Tidak ada jadwal pelayanan atau warta untuk hari ini.</div>`;
+                container.innerHTML = `<div class="text-gray-400 text-center py-2 text-sm italic">Tidak ada jadwal pelayanan atau warta untuk hari ini.</div>`;
             }
         }
 
-        async function fetchBerita() {
-            let { data: daftarBerita } = await supabaseClient
-                .from('berita')
-                .select('*')
-                .eq('aktif', true)
-                .order('tanggal_publikasi', { ascending: false });
+        function renderBerita(data) {
+            const container = document.getElementById('daftar-berita');
+            container.innerHTML = '';
+            let adaBerita = false;
 
-            const containerBerita = document.getElementById('daftar-berita');
-            containerBerita.innerHTML = '';
-            if(daftarBerita && daftarBerita.length > 0) {
-                daftarBerita.forEach(b => {
-                    containerBerita.innerHTML += `
-                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                            <h3 class="font-bold text-gray-950 text-base font-serif-pairing">${b.judul}</h3>
-                            <span class="text-[10px] text-gray-400 block mb-2">📅 ${b.tanggal_publikasi}</span>
-                            <p class="text-sm text-gray-600 leading-relaxed">${b.isi_konten}</p>
-                        </div>
-                    `;
+            if (Array.isArray(data) && data.length > 0) {
+                data.reverse().forEach(b => {
+                    if (b.aktif === "TRUE" || b.aktif === true || b.aktif === "true") {
+                        adaBerita = true;
+                        container.innerHTML += `
+                            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                                <h3 class="font-bold text-gray-950 text-base font-serif-pairing">${b.judul}</h3>
+                                <span class="text-[10px] text-gray-400 block mb-2">📅 ${b.tanggal_publikasi || ''}</span>
+                                <p class="text-sm text-gray-600 leading-relaxed">${b.isi_konten}</p>
+                            </div>
+                        `;
+                    }
                 });
-            } else {
-                containerBerita.innerHTML = '<p class="text-gray-400 text-sm italic text-center py-4">Belum ada informasi terbaru.</p>';
+            }
+            if (!adaBerita) {
+                container.innerHTML = '<p class="text-gray-400 text-sm italic text-center py-4">Belum ada informasi terbaru.</p>';
             }
         }
 
-        async function fetchDemografi() {
-            let { data: semuaJemaat } = await supabaseClient.from('jemaat').select('*');
-            if (!semuaJemaat) return;
+        function renderDemografiAndUltah(data) {
+            if (!Array.isArray(data) || data.length === 0) return;
 
-            let jiwa = semuaJemaat.length;
+            let jiwa = data.length;
             let laki = 0, perempuan = 0, tetap = 0, simpatisan = 0;
             let anak = 0, pemuda = 0, dewasa = 0;
             let keluargaUnik = new Set();
@@ -264,7 +264,7 @@
             const todayMonth = today.getMonth();
             const todayDate = today.getDate();
 
-            semuaJemaat.forEach(j => {
+            data.forEach(j => {
                 if (j.jenis_kelamin === 'L') laki++;
                 if (j.jenis_kelamin === 'P') perempuan++;
                 if (j.status_keanggotaan === 'Tetap') tetap++;
@@ -276,9 +276,11 @@
                 else if (umur >= 17 && umur <= 34) pemuda++;
                 else if (umur >= 35) dewasa++;
 
-                const birthDate = new Date(j.tanggal_lahir);
-                if (birthDate.getMonth() === todayMonth && birthDate.getDate() === todayDate) {
-                    jemaatUltahHariIni.push(`${j.nama_lengkap} (${umur + 1} Thn)`);
+                if (j.tanggal_lahir) {
+                    const birthDate = new Date(j.tanggal_lahir);
+                    if (birthDate.getMonth() === todayMonth && birthDate.getDate() === todayDate) {
+                        jemaatUltahHariIni.push(`${j.nama_lengkap} (${umur + 1} Thn)`);
+                    }
                 }
             });
 
@@ -302,17 +304,13 @@
             document.getElementById('stat-simpatisan').innerText = simpatisan;
         }
 
-        async function fetchMajelis() {
-            let { data: daftarMajelis } = await supabaseClient
-                .from('majelis')
-                .select('*')
-                .order('urutan', { ascending: true });
-
+        function renderMajelis(data) {
             const container = document.getElementById('daftar-majelis');
             container.innerHTML = '';
 
-            if (daftarMajelis && daftarMajelis.length > 0) {
-                daftarMajelis.forEach(m => {
+            if (Array.isArray(data) && data.length > 0) {
+                data.sort((a, b) => parseInt(a.urutan || 99) - parseInt(b.urutan || 99));
+                data.forEach(m => {
                     container.innerHTML += `
                         <div class="bg-white px-4 py-3 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center">
                             <span class="font-semibold text-gray-900 text-sm">${m.nama_lengkap}</span>
@@ -325,23 +323,18 @@
             }
         }
 
-        async function fetchGaleri() {
-            let { data: fotoGaleri } = await supabaseClient
-                .from('galeri')
-                .select('*')
-                .order('tanggal_kegiatan', { ascending: false });
-
+        function renderGaleri(data) {
             const container = document.getElementById('grid-galeri');
             container.innerHTML = '';
 
-            if (fotoGaleri && fotoGaleri.length > 0) {
-                fotoGaleri.forEach(g => {
+            if (Array.isArray(data) && data.length > 0) {
+                data.reverse().forEach(g => {
                     container.innerHTML += `
                         <div class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
                             <img src="${g.url_foto}" alt="${g.judul_kegiatan}" class="w-full h-28 object-cover">
                             <div class="p-2">
                                 <p class="text-xs font-bold text-gray-950 truncate">${g.judul_kegiatan}</p>
-                                <span class="text-[9px] text-gray-400 font-mono block mt-0.5">📅 ${g.tanggal_kegiatan}</span>
+                                <span class="text-[9px] text-gray-400 font-mono block mt-0.5">📅 ${g.tanggal_kegiatan || ''}</span>
                             </div>
                         </div>
                     `;
