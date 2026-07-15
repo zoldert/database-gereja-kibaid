@@ -342,4 +342,53 @@
             document.getElementById('stat-remaja').innerText = remaja;
 
             document.getElementById('stat-pemuda').innerText = pemuda;
-            docu
+document.getElementById('stat-dewasa').innerText = dewasa;
+            document.getElementById('stat-tetap').innerText = tetap;
+            document.getElementById('stat-simpatisan').innerText = simpatisan;
+        }
+
+        function renderMajelis(data) {
+            const container = document.getElementById('daftar-majelis');
+            container.innerHTML = '';
+
+            if (Array.isArray(data) && data.length > 0) {
+                data.sort((a, b) => parseInt(a.urutan || 99) - parseInt(b.urutan || 99));
+                data.forEach(m => {
+                    container.innerHTML += `
+                        <div class="bg-white px-4 py-3 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center">
+                            <span class="font-semibold text-gray-900 text-sm">${m.nama_lengkap}</span>
+                            <span class="text-xs text-purple-700 bg-purple-50 font-bold px-2 py-0.5 rounded-full border border-purple-100">${m.jabatan}</span>
+                        </div>
+                    `;
+                });
+            } else {
+                container.innerHTML = '<p class="text-gray-400 text-sm italic text-center py-2">Data pengurus majelis belum dimasukkan.</p>';
+            }
+        }
+
+        function renderGaleri(data) {
+            const container = document.getElementById('grid-galeri');
+            container.innerHTML = '';
+
+            if (Array.isArray(data) && data.length > 0) {
+                data.reverse().forEach(g => {
+                    // Penambahan trigger click onclick="openLightbox(...)" pada elemen gambar
+                    container.innerHTML += `
+                        <div class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer" onclick="openLightbox('${g.url_foto}', '${g.judul_kegiatan}')">
+                            <img src="${g.url_foto}" alt="${g.judul_kegiatan}" class="w-full h-28 object-cover hover:opacity-90 transition">
+                            <div class="p-2">
+                                <p class="text-xs font-bold text-gray-950 truncate">${g.judul_kegiatan}</p>
+                                <span class="text-[9px] text-gray-400 font-mono block mt-0.5">📅 ${g.tanggal_kegiatan || ''}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                container.innerHTML = '<p class="text-gray-400 text-sm italic text-center py-4 col-span-2">Belum ada foto kegiatan.</p>';
+            }
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
