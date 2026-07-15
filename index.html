@@ -121,22 +121,20 @@
                 <div class="flex justify-between text-sm"><span>Dewasa (35+ thn)</span><span id="stat-dewasa" class="font-bold">0</span></div>
             </div>
 
+            <!-- PERUBAHAN LABEL DI SINI: MENGHITUNG KELUARGA -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-3">
-                <h3 class="text-sm font-bold text-purple-900 border-b pb-1">Status Jemaat</h3>
-                <div class="flex justify-between text-sm"><span>Jemaat Tetap</span><span id="stat-tetap" class="font-bold text-emerald-600">0</span></div>
-                <div class="flex justify-between text-sm"><span>Simpatisan</span><span id="stat-simpatisan" class="font-bold text-amber-600">0</span></div>
+                <h3 class="text-sm font-bold text-purple-900 border-b pb-1">Status Keanggotaan Keluarga</h3>
+                <div class="flex justify-between text-sm"><span>Keluarga Tetap</span><span id="stat-keluarga-tetap" class="font-bold text-emerald-600">0</span></div>
+                <div class="flex justify-between text-sm"><span>Keluarga Simpatisan</span><span id="stat-keluarga-simpatisan" class="font-bold text-amber-600">0</span></div>
             </div>
         </section>
 
     </main>
 
-    <!-- ================= MODAL LIGHTBOX POP-UP UNTUK PERBESAR FOTO ================= -->
+    <!-- MODAL LIGHTBOX POP-UP UNTUK PERBESAR FOTO -->
     <div id="lightbox-modal" class="hidden fixed inset-0 bg-black/95 z-50 flex flex-col justify-center items-center p-4" onclick="closeLightbox()">
-        <!-- Tombol Tutup X -->
         <button class="absolute top-6 right-6 text-white text-3xl font-black bg-white/10 hover:bg-white/20 w-12 h-12 rounded-full flex justify-center items-center cursor-pointer">&times;</button>
-        <!-- Kontainer Foto -->
         <img id="lightbox-img" src="" alt="Foto Besar" class="max-w-full max-h-[75vh] object-contain rounded-lg shadow-2xl" onclick="event.stopPropagation()">
-        <!-- Keterangan Judul Foto -->
         <p id="lightbox-caption" class="text-white text-sm font-bold mt-4 text-center px-4 max-w-md"></p>
     </div>
 
@@ -167,18 +165,16 @@
             return age;
         }
 
-        // FUNGSI UNTUK MEMBUKA LIGHTBOX FOTO BESAR
         function openLightbox(url, title) {
             document.getElementById('lightbox-img').src = url;
             document.getElementById('lightbox-caption').innerText = title;
             document.getElementById('lightbox-modal').classList.remove('hidden');
-            document.body.classList.add('overflow-hidden'); // Kunci scroll layar utama
+            document.body.classList.add('overflow-hidden');
         }
 
-        // FUNGSI UNTUK MENUTUP LIGHTBOX
         function closeLightbox() {
             document.getElementById('lightbox-modal').classList.add('hidden');
-            document.body.classList.remove('overflow-hidden'); // Aktifkan scroll kembali
+            document.body.classList.remove('overflow-hidden');
         }
 
         async function initApp() {
@@ -286,10 +282,13 @@
             if (!Array.isArray(data) || data.length === 0) return;
 
             let jiwa = data.length;
-            let laki = 0, perempuan = 0, tetap = 0, simpatisan = 0;
+            let laki = 0, perempuan = 0;
             let balita = 0, pratama = 0, madya = 0, taruna = 0, remaja = 0;
             let pemuda = 0, dewasa = 0;
+            
             let keluargaUnik = new Set();
+            // Map khusus untuk mengikat status keanggotaan terakhir dari setiap id_keluarga unik
+            let statusKeluargaMap = new Map(); 
             
             let jemaatUltahHariIni = [];
             const today = new Date();
@@ -299,9 +298,17 @@
             data.forEach(j => {
                 if (j.jenis_kelamin === 'L') laki++;
                 if (j.jenis_kelamin === 'P') perempuan++;
-                if (j.status_keanggotaan === 'Tetap') tetap++;
-                if (j.status_keanggotaan === 'Simpatisan') simpatisan++;
-                if (j.id_keluarga) keluargaUnik.add(j.id_keluarga);
+                
+                // Daftarkan id_keluarga ke Set
+                if (j.id_keluarga) {
+                    const idFam = parseInt(j.id_keluarga);
+                    keluargaUnik.add(idFam);
+                    
+                    // Simpan status keanggotaan keluarga (Utamakan status "Tetap" jika terjadi perbedaan input antar-anggota)
+                    if (j.status_keanggotaan === 'Tetap' || !statusKeluargaMap.has(idFam)) {
+                        statusKeluargaMap.set(idFam, j.status_keanggotaan);
+                    }
+                }
 
                 const umur = calculateAge(j.tanggal_lahir);
                 
@@ -319,6 +326,14 @@
                         jemaatUltahHariIni.push(`${j.nama_lengkap} (${umur + 1} Thn)`);
                     }
                 }
+            });
+
+            // HITUNG LOGIKA TOTAL KELUARGA TETAP vs SIMPATISAN SECARA UNIK
+            let keluargaTetap = 0;
+            let keluargaSimpatisan = 0;
+            statusKeluargaMap.forEach((status) => {
+                if (status === 'Tetap') keluargaTetap++;
+                else if (status === 'Simpatisan') keluargaSimpatisan++;
             });
 
             const boxUltah = document.getElementById('box-ulang-tahun');
@@ -342,9 +357,11 @@
             document.getElementById('stat-remaja').innerText = remaja;
 
             document.getElementById('stat-pemuda').innerText = pemuda;
-document.getElementById('stat-dewasa').innerText = dewasa;
-            document.getElementById('stat-tetap').innerText = tetap;
-            document.getElementById('stat-simpatisan').innerText = simpatisan;
+            document.getElementById('stat-dewasa').innerText = dewasa;
+            
+            // Masukkan hasil hitungan unik keluarga ke web
+            document.getElementById('stat-keluarga-tetap').innerText = keluargaTetap;
+            document.getElementById('stat-keluarga-simpatisan').innerText = keluargaSimpatisan;
         }
 
         function renderMajelis(data) {
@@ -372,7 +389,6 @@ document.getElementById('stat-dewasa').innerText = dewasa;
 
             if (Array.isArray(data) && data.length > 0) {
                 data.reverse().forEach(g => {
-                    // Penambahan trigger click onclick="openLightbox(...)" pada elemen gambar
                     container.innerHTML += `
                         <div class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer" onclick="openLightbox('${g.url_foto}', '${g.judul_kegiatan}')">
                             <img src="${g.url_foto}" alt="${g.judul_kegiatan}" class="w-full h-28 object-cover hover:opacity-90 transition">
