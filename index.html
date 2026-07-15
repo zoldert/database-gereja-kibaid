@@ -169,7 +169,7 @@
 
     <!-- FOOTER KETERANGAN -->
     <footer class="bg-gray-800 py-5 text-center text-[9px] text-gray-500 max-w-md mx-auto tracking-widest font-heading">
-        &copy; 2026 GEREJA KIBAID JEMAAT AMBON KOTA.
+        &copy; 2026 GEREJA KIBAID GEREJA JEMAAT AMBON KOTA.
     </footer>
 
     <!-- LOGIKA JAVASCRIPT & GOOGLE SHEETS VIA SHEETDB -->
@@ -206,7 +206,6 @@
             document.body.classList.remove('overflow-hidden');
         }
 
-        // FUNGSI TOGGLE KHUSUS UNTUK DETAIL WARTA HARI INI
         function toggleWarta(idKegiatan) {
             const boxDetail = document.getElementById(`detail-${idKegiatan}`);
             const btnText = document.getElementById(`btn-text-${idKegiatan}`);
@@ -223,7 +222,6 @@
             }
         }
 
-        // FUNGSI TOGGLE GLOBAL UNTUK KOTAK DEMOGRAFI JEMAAT
         function toggleSection(sectionId, textId, iconId) {
             const target = document.getElementById(sectionId);
             const txt = document.getElementById(textId);
@@ -380,7 +378,7 @@
                 const umur = calculateAge(j.tanggal_lahir);
                 
                 if (umur <= 3) balita++;
-                else if (umur >= 4 && uuid = 6 || umur <= 6) pratama++;
+                else if (umur >= 4 && umur <= 6) pratama++;
                 else if (umur >= 7 && umur <= 9) madya++;
                 else if (umur >= 10 && umur <= 12) taruna++;
                 else if (umur >= 13 && umur <= 16) remaja++;
