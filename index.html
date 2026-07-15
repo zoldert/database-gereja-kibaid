@@ -6,60 +6,64 @@
     <title>Database Gereja KIBAID</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Google Fonts: Open Sans & Playfair Display -->
+    <!-- Google Fonts: Inter (Body) & Plus Jakarta Sans (Headings) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..0,800;1,300..1,800&family=Playfair+Display:ital,wght@0,400..0,900;1,400..1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        body { font-family: 'Open Sans', sans-serif; }
-        .font-serif-pairing { font-family: 'Playfair Display', serif; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+        }
+        .font-heading { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 tracking-wide">
+<body class="bg-gray-50 text-gray-800 tracking-tight antialiased">
 
     <!-- HEADER (LOGO, NAMA 2 BARIS, DAN TANGGAL BERJALAN) -->
     <header class="sticky top-0 bg-purple-700 py-5 px-4 text-center text-white shadow-md z-50 max-w-md mx-auto flex flex-col items-center gap-1">
         <img id="logo-gereja" src="https://images.unsplash.com/photo-1545128485-c400e7702796?w=100&auto=format&fit=crop&q=60" 
              alt="Logo KIBAID" class="w-14 h-14 rounded-full object-cover border-2 border-amber-400 mb-1 shadow-md">
         
-        <h1 class="text-lg font-black font-serif-pairing tracking-wider uppercase leading-tight text-amber-300">
+        <h1 class="text-lg font-extrabold font-heading tracking-wider uppercase leading-tight text-amber-300">
             GEREJA KIBAID
         </h1>
-        <h2 class="text-sm font-bold font-serif-pairing tracking-wide uppercase leading-tight text-white/90">
+        <h2 class="text-xs font-bold font-heading tracking-wide uppercase leading-tight text-white/90">
             JEMAAT AMBON KOTA
         </h2>
         
-        <div id="hari-tanggal-berjalan" class="text-[11px] font-semibold tracking-wide text-purple-100 mt-1 bg-purple-800/50 px-3 py-0.5 rounded-full">
+        <div id="hari-tanggal-berjalan" class="text-[10px] font-medium tracking-wide text-purple-100 mt-1 bg-purple-800/50 px-3 py-0.5 rounded-full">
             Memuat tanggal...
         </div>
     </header>
 
     <!-- MAIN LANDING PAGE CONTAINER -->
-    <main class="p-4 max-w-md mx-auto space-y-8 pb-12">
+    <main class="p-4 max-w-md mx-auto space-y-6 pb-12">
         
         <!-- LOADING INDICATOR -->
-        <div id="loading" class="text-center py-6 font-semibold text-purple-900">
+        <div id="loading" class="text-center py-6 font-semibold text-purple-900 text-sm">
             ⏳ Memuat data jemaat...
         </div>
 
         <!-- ================= 1. INFO TERKINI / BERITA ================= -->
         <section class="space-y-3">
-            <h2 class="text-lg font-black font-serif-pairing text-purple-950 border-b-2 border-purple-200 pb-1 px-1">Info Terkini</h2>
+            <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Info Terkini</h2>
             <div id="daftar-berita" class="space-y-3"></div>
         </section>
 
         <!-- ================= 2. WARTA HARI INI ================= -->
         <section class="space-y-4">
             <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                <h2 class="text-xs font-bold text-purple-700 uppercase tracking-widest mb-3">Warta Hari Ini</h2>
+                <h2 class="text-xs font-bold text-purple-700 uppercase tracking-widest mb-3 font-heading">Warta Hari Ini</h2>
                 <div id="pelayanan-hari-ini" class="space-y-4"></div>
             </div>
         </section>
 
         <!-- ================= 3. GALERI FOTO KEGIATAN ================= -->
         <section class="space-y-3">
-            <h2 class="text-lg font-black font-serif-pairing text-purple-950 border-b-2 border-purple-200 pb-1 px-1">Galeri Kegiatan</h2>
+            <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Galeri Kegiatan</h2>
             <div id="grid-galeri" class="grid grid-cols-2 gap-3">
                 <!-- Grid Foto Dinamis -->
             </div>
@@ -67,7 +71,7 @@
 
         <!-- ================= 4. PENGURUS MAJELIS JEMAAT ================= -->
         <section class="space-y-3">
-            <h2 class="text-lg font-black font-serif-pairing text-purple-950 border-b-2 border-purple-200 pb-1 px-1">Majelis Jemaat</h2>
+            <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Majelis Jemaat</h2>
             <div id="daftar-majelis" class="grid grid-cols-1 gap-2">
                 <!-- Data Nama Bawaan Dinamis -->
             </div>
@@ -75,57 +79,56 @@
 
         <!-- ================= 5. DEMOGRAFI JEMAAT & ULANG TAHUN ================= -->
         <section class="space-y-4">
-            <h2 class="text-lg font-black font-serif-pairing text-purple-950 border-b-2 border-purple-200 pb-1 px-1">Demografi Jemaat</h2>
+            <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Demografi Jemaat</h2>
             
-            <div id="box-ulang-tahun" class="hidden bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-4 rounded-2xl shadow-md text-white space-y-2 animate-pulse">
+            <div id="box-ulang-tahun" class="hidden bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-4 rounded-2xl shadow-md text-white space-y-1 animate-pulse">
                 <div class="flex items-center gap-2">
-                    <span class="text-xl">🎂</span>
-                    <h3 class="text-xs font-black uppercase tracking-widest text-purple-950">Selamat Ulang Tahun!</h3>
+                    <span class="text-lg">🎂</span>
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-purple-950 font-heading">Selamat Ulang Tahun!</h3>
                 </div>
-                <div id="list-jemaat-ultah" class="text-sm font-bold bg-white/20 p-2 rounded-xl text-purple-950 leading-relaxed"></div>
-                <p class="text-[10px] italic text-purple-900 font-medium">"Tuhan memberkati umur panjang dan pelayananmu."</p>
+                <div id="list-jemaat-ultah" class="text-xs font-bold bg-white/20 p-2 rounded-xl text-purple-950 leading-relaxed"></div>
+                <p class="text-[9px] italic text-purple-900 font-medium">"Tuhan memberkati umur panjang dan pelayananmu."</p>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                    <span class="text-xs text-gray-400 font-bold block">Total Keluarga</span>
-                    <span id="stat-keluarga" class="text-2xl font-extrabold text-gray-800 font-serif-pairing">0</span>
+                    <span class="text-[11px] text-gray-400 font-bold block">Total Keluarga</span>
+                    <span id="stat-keluarga" class="text-xl font-extrabold text-gray-800 font-heading">0</span>
                 </div>
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                    <span class="text-xs text-gray-400 font-bold block">Jumlah Jiwa</span>
-                    <span id="stat-jiwa" class="text-2xl font-extrabold text-gray-800 font-serif-pairing">0</span>
+                    <span class="text-[11px] text-gray-400 font-bold block">Jumlah Jiwa</span>
+                    <span id="stat-jiwa" class="text-xl font-extrabold text-gray-800 font-heading">0</span>
                 </div>
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                    <span class="text-xs text-gray-400 font-bold block">Laki-laki</span>
-                    <span id="stat-laki" class="text-xl font-bold text-purple-600">0</span>
+                    <span class="text-[11px] text-gray-400 font-bold block">Laki-laki</span>
+                    <span id="stat-laki" class="text-lg font-bold text-purple-600">0</span>
                 </div>
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                    <span class="text-xs text-gray-400 font-bold block">Perempuan</span>
-                    <span id="stat-perempuan" class="text-xl font-bold text-pink-600">0</span>
+                    <span class="text-[11px] text-gray-400 font-bold block">Perempuan</span>
+                    <span id="stat-perempuan" class="text-lg font-bold text-pink-600">0</span>
                 </div>
             </div>
 
-            <!-- KATEGORI USIA ANAK DAN REMAJA -->
+            <!-- KATEGORI USIA ANAK DAN REMAJA (BERSIH TANPA KURUNG) -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-3">
-                <h3 class="text-sm font-bold text-purple-900 border-b pb-1">Kategori Anak & Remaja</h3>
-                <div class="flex justify-between text-sm"><span>Balita/Batita (0-3 thn)</span><span id="stat-balita" class="font-bold text-purple-700">0</span></div>
-                <div class="flex justify-between text-sm"><span>Pratama (4-6 thn)</span><span id="stat-pratama" class="font-bold text-purple-700">0</span></div>
-                <div class="flex justify-between text-sm"><span>Madya (7-9 thn)</span><span id="stat-madya" class="font-bold text-purple-700">0</span></div>
-                <div class="flex justify-between text-sm"><span>Taruna/Utama (10-12 thn)</span><span id="stat-taruna" class="font-bold text-purple-700">0</span></div>
-                <div class="flex justify-between text-sm"><span>Remaja (13-16 thn)</span><span id="stat-remaja" class="font-bold text-purple-700">0</span></div>
+                <h3 class="text-xs font-bold text-purple-900 border-b pb-1 uppercase tracking-wider font-heading">Kategori Anak & Remaja</h3>
+                <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Balita / Batita</span><span id="stat-balita" class="font-bold text-purple-700 text-base">0</span></div>
+                <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Pratama</span><span id="stat-pratama" class="font-bold text-purple-700 text-base">0</span></div>
+                <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Madya</span><span id="stat-madya" class="font-bold text-purple-700 text-base">0</span></div>
+                <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Taruna / Utama</span><span id="stat-taruna" class="font-bold text-purple-700 text-base">0</span></div>
+                <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Remaja</span><span id="stat-remaja" class="font-bold text-purple-700 text-base">0</span></div>
             </div>
 
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-3">
-                <h3 class="text-sm font-bold text-purple-900 border-b pb-1">Kategori Dewasa</h3>
-                <div class="flex justify-between text-sm"><span>Pemuda (17-34 thn)</span><span id="stat-pemuda" class="font-bold">0</span></div>
-                <div class="flex justify-between text-sm"><span>Dewasa (35+ thn)</span><span id="stat-dewasa" class="font-bold">0</span></div>
+                <h3 class="text-xs font-bold text-purple-900 border-b pb-1 uppercase tracking-wider font-heading">Kategori Dewasa</h3>
+                <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Pemuda</span><span id="stat-pemuda" class="font-bold text-gray-900 text-base">0</span></div>
+                <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Dewasa</span><span id="stat-dewasa" class="font-bold text-gray-900 text-base">0</span></div>
             </div>
 
-            <!-- PERUBAHAN LABEL DI SINI: MENGHITUNG KELUARGA -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-3">
-                <h3 class="text-sm font-bold text-purple-900 border-b pb-1">Status Keanggotaan Keluarga</h3>
-                <div class="flex justify-between text-sm"><span>Keluarga Tetap</span><span id="stat-keluarga-tetap" class="font-bold text-emerald-600">0</span></div>
-                <div class="flex justify-between text-sm"><span>Keluarga Simpatisan</span><span id="stat-keluarga-simpatisan" class="font-bold text-amber-600">0</span></div>
+                <h3 class="text-xs font-bold text-purple-900 border-b pb-1 uppercase tracking-wider font-heading">Status Keanggotaan Keluarga</h3>
+                <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Keluarga Tetap</span><span id="stat-keluarga-tetap" class="font-bold text-emerald-600 text-base">0</span></div>
+                <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Keluarga Simpatisan</span><span id="stat-keluarga-simpatisan" class="font-bold text-amber-600 text-base">0</span></div>
             </div>
         </section>
 
@@ -133,14 +136,14 @@
 
     <!-- MODAL LIGHTBOX POP-UP UNTUK PERBESAR FOTO -->
     <div id="lightbox-modal" class="hidden fixed inset-0 bg-black/95 z-50 flex flex-col justify-center items-center p-4" onclick="closeLightbox()">
-        <button class="absolute top-6 right-6 text-white text-3xl font-black bg-white/10 hover:bg-white/20 w-12 h-12 rounded-full flex justify-center items-center cursor-pointer">&times;</button>
+        <button class="absolute top-6 right-6 text-white text-2xl font-light bg-white/10 w-10 h-10 rounded-full flex justify-center items-center cursor-pointer">&times;</button>
         <img id="lightbox-img" src="" alt="Foto Besar" class="max-w-full max-h-[75vh] object-contain rounded-lg shadow-2xl" onclick="event.stopPropagation()">
-        <p id="lightbox-caption" class="text-white text-sm font-bold mt-4 text-center px-4 max-w-md"></p>
+        <p id="lightbox-caption" class="text-white text-xs font-semibold mt-4 text-center px-4 max-w-md"></p>
     </div>
 
     <!-- FOOTER KETERANGAN -->
-    <footer class="bg-gray-800 py-5 text-center text-[10px] text-gray-400 max-w-md mx-auto">
-        &copy; 2026 GEREJA KIBAID JEMAAT AMBON KOTA. All Rights Reserved.
+    <footer class="bg-gray-800 py-5 text-center text-[9px] text-gray-500 max-w-md mx-auto tracking-widest font-heading">
+        &copy; 2026 GEREJA KIBAID JEMAAT AMBON KOTA.
     </footer>
 
     <!-- LOGIKA JAVASCRIPT & GOOGLE SHEETS VIA SHEETDB -->
@@ -198,8 +201,8 @@
 
                 document.getElementById('loading').classList.add('hidden');
             } catch (error) {
-                console.error("Gagal memuat data Google Sheets:", error);
-                document.getElementById('loading').innerText = "❌ Hubungan koneksi Google Sheets terputus.";
+                console.error("Gagal memuat data:", error);
+                document.getElementById('loading').innerText = "❌ Gagal memuat database.";
             }
         }
 
@@ -229,19 +232,19 @@
                         container.innerHTML += `
                             <div class="pb-2 space-y-3">
                                 <div class="border-l-4 border-purple-600 pl-3 mb-4">
-                                    <p class="font-bold text-gray-950 text-base font-serif-pairing">${p.nama_kegiatan} (${time} WIT)</p>
+                                    <p class="font-bold text-gray-950 text-base font-heading">${p.nama_kegiatan} (${time} WIT)</p>
                                     ${p.keterangan ? `<p class="text-[11px] text-purple-700 italic mt-0.5">* ${p.keterangan}</p>` : ''}
                                 </div>
                                 <div class="bg-gray-50 rounded-xl border border-gray-100 overflow-hidden divide-y divide-gray-200/60 text-xs">
-                                    <div class="p-3 bg-white"><span class="font-bold text-gray-500 block mb-0.5">Khotbah</span><span class="text-gray-900 font-medium">${p.pengkhotbah || '-'}</span></div>
-                                    <div class="p-3 bg-white"><span class="font-bold text-gray-500 block mb-0.5">Liturgis/Pelayan</span><span class="text-gray-900 font-medium">${p.pelayan_liturgi || '-'}</span></div>
-                                    <div class="p-3 bg-white"><span class="font-bold text-gray-500 block mb-0.5">Pemusik</span><span class="text-gray-900 font-medium">${p.pemusik || '-'}</span></div>
-                                    <div class="p-3 bg-white"><span class="font-bold text-gray-500 block mb-0.5">Pendoa Syafaat</span><span class="text-gray-900 font-medium">${p.pendoa_syafaat || '-'}</span></div>
-                                    <div class="p-3 bg-white"><span class="font-bold text-gray-500 block mb-0.5">Kolektan</span><span class="text-gray-900 font-medium">${p.kolektan || '-'}</span></div>
-                                    <div class="p-3 bg-white"><span class="font-bold text-gray-500 block mb-0.5">Operator LCD</span><span class="text-gray-900 font-medium">${p.operator_lcd || '-'}</span></div>
-                                    <div class="p-3 bg-white"><span class="font-bold text-gray-500 block mb-0.5">Doa Persembahan</span><span class="text-gray-900 font-medium">${p.doa_persembahan || '-'}</span></div>
-                                    <div class="p-3 bg-white"><span class="font-bold text-gray-500 block mb-0.5">Pembaca Warta</span><span class="text-gray-900 font-medium">${p.pembaca_warta || '-'}</span></div>
-                                    <div class="p-3 bg-white"><span class="font-bold text-gray-500 block mb-0.5">Penyambut Jemaat</span><span class="text-gray-900 font-medium">${p.penyambut_jemaat || '-'}</span></div>
+                                    <div class="p-3 bg-white"><span class="font-bold text-gray-400 block text-[10px] uppercase tracking-wider font-heading mb-0.5">Khotbah</span><span class="text-gray-900 font-semibold text-sm">${p.pengkhotbah || '-'}</span></div>
+                                    <div class="p-3 bg-white"><span class="font-bold text-gray-400 block text-[10px] uppercase tracking-wider font-heading mb-0.5">Liturgis/Pelayan</span><span class="text-gray-900 font-semibold text-sm">${p.pelayan_liturgi || '-'}</span></div>
+                                    <div class="p-3 bg-white"><span class="font-bold text-gray-400 block text-[10px] uppercase tracking-wider font-heading mb-0.5">Pemusik</span><span class="text-gray-900 font-semibold text-sm">${p.pemusik || '-'}</span></div>
+                                    <div class="p-3 bg-white"><span class="font-bold text-gray-400 block text-[10px] uppercase tracking-wider font-heading mb-0.5">Pendoa Syafaat</span><span class="text-gray-900 font-semibold text-sm">${p.pendoa_syafaat || '-'}</span></div>
+                                    <div class="p-3 bg-white"><span class="font-bold text-gray-400 block text-[10px] uppercase tracking-wider font-heading mb-0.5">Kolektan</span><span class="text-gray-900 font-semibold text-sm">${p.kolektan || '-'}</span></div>
+                                    <div class="p-3 bg-white"><span class="font-bold text-gray-400 block text-[10px] uppercase tracking-wider font-heading mb-0.5">Operator LCD</span><span class="text-gray-900 font-semibold text-sm">${p.operator_lcd || '-'}</span></div>
+                                    <div class="p-3 bg-white"><span class="font-bold text-gray-400 block text-[10px] uppercase tracking-wider font-heading mb-0.5">Doa Persembahan</span><span class="text-gray-900 font-semibold text-sm">${p.doa_persembahan || '-'}</span></div>
+                                    <div class="p-3 bg-white"><span class="font-bold text-gray-400 block text-[10px] uppercase tracking-wider font-heading mb-0.5">Pembaca Warta</span><span class="text-gray-900 font-semibold text-sm">${p.pembaca_warta || '-'}</span></div>
+                                    <div class="p-3 bg-white"><span class="font-bold text-gray-400 block text-[10px] uppercase tracking-wider font-heading mb-0.5">Penyambut Jemaat</span><span class="text-gray-900 font-semibold text-sm">${p.penyambut_jemaat || '-'}</span></div>
                                 </div>
                             </div>
                         `;
@@ -265,9 +268,9 @@
                         adaBerita = true;
                         container.innerHTML += `
                             <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                                <h3 class="font-bold text-gray-950 text-base font-serif-pairing">${b.judul}</h3>
-                                <span class="text-[10px] text-gray-400 block mb-2">📅 ${b.tanggal_publikasi || ''}</span>
-                                <p class="text-sm text-gray-600 leading-relaxed">${b.isi_konten}</p>
+                                <h3 class="font-bold text-gray-950 text-base font-heading">${b.judul}</h3>
+                                <span class="text-[10px] text-gray-400 block mb-2 font-medium">📅 ${b.tanggal_publikasi || ''}</span>
+                                <p class="text-sm text-gray-600 leading-relaxed font-normal">${b.isi_konten}</p>
                             </div>
                         `;
                     }
@@ -287,7 +290,6 @@
             let pemuda = 0, dewasa = 0;
             
             let keluargaUnik = new Set();
-            // Map khusus untuk mengikat status keanggotaan terakhir dari setiap id_keluarga unik
             let statusKeluargaMap = new Map(); 
             
             let jemaatUltahHariIni = [];
@@ -299,12 +301,9 @@
                 if (j.jenis_kelamin === 'L') laki++;
                 if (j.jenis_kelamin === 'P') perempuan++;
                 
-                // Daftarkan id_keluarga ke Set
                 if (j.id_keluarga) {
                     const idFam = parseInt(j.id_keluarga);
                     keluargaUnik.add(idFam);
-                    
-                    // Simpan status keanggotaan keluarga (Utamakan status "Tetap" jika terjadi perbedaan input antar-anggota)
                     if (j.status_keanggotaan === 'Tetap' || !statusKeluargaMap.has(idFam)) {
                         statusKeluargaMap.set(idFam, j.status_keanggotaan);
                     }
@@ -328,7 +327,6 @@
                 }
             });
 
-            // HITUNG LOGIKA TOTAL KELUARGA TETAP vs SIMPATISAN SECARA UNIK
             let keluargaTetap = 0;
             let keluargaSimpatisan = 0;
             statusKeluargaMap.forEach((status) => {
@@ -359,7 +357,6 @@
             document.getElementById('stat-pemuda').innerText = pemuda;
             document.getElementById('stat-dewasa').innerText = dewasa;
             
-            // Masukkan hasil hitungan unik keluarga ke web
             document.getElementById('stat-keluarga-tetap').innerText = keluargaTetap;
             document.getElementById('stat-keluarga-simpatisan').innerText = keluargaSimpatisan;
         }
@@ -374,7 +371,7 @@
                     container.innerHTML += `
                         <div class="bg-white px-4 py-3 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center">
                             <span class="font-semibold text-gray-900 text-sm">${m.nama_lengkap}</span>
-                            <span class="text-xs text-purple-700 bg-purple-50 font-bold px-2 py-0.5 rounded-full border border-purple-100">${m.jabatan}</span>
+                            <span class="text-xs text-purple-700 bg-purple-50 font-bold px-2 py-0.5 rounded-full border border-purple-100 font-heading">${m.jabatan}</span>
                         </div>
                     `;
                 });
@@ -393,8 +390,8 @@
                         <div class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer" onclick="openLightbox('${g.url_foto}', '${g.judul_kegiatan}')">
                             <img src="${g.url_foto}" alt="${g.judul_kegiatan}" class="w-full h-28 object-cover hover:opacity-90 transition">
                             <div class="p-2">
-                                <p class="text-xs font-bold text-gray-950 truncate">${g.judul_kegiatan}</p>
-                                <span class="text-[9px] text-gray-400 font-mono block mt-0.5">📅 ${g.tanggal_kegiatan || ''}</span>
+                                <p class="text-xs font-bold text-gray-950 truncate font-heading">${g.judul_kegiatan}</p>
+                                <span class="text-[9px] text-gray-400 block mt-0.5 font-medium">📅 ${g.tanggal_kegiatan || ''}</span>
                             </div>
                         </div>
                     `;
