@@ -109,25 +109,52 @@
                 </div>
             </div>
 
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-3">
-                <h3 class="text-xs font-bold text-purple-900 border-b pb-1">Kategori Anak & Remaja</h3>
-                <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Balita / Batita</span><span id="stat-balita" class="font-bold text-purple-700 text-base">0</span></div>
-                <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Pratama</span><span id="stat-pratama" class="font-bold text-purple-700 text-base">0</span></div>
-                <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Madya</span><span id="stat-madya" class="font-bold text-purple-700 text-base">0</span></div>
-                <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Taruna / Utama</span><span id="stat-taruna" class="font-bold text-purple-700 text-base">0</span></div>
-                <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Remaja</span><span id="stat-remaja" class="font-bold text-purple-700 text-base">0</span></div>
+            <!-- KATEGORI USIA ANAK DAN REMAJA -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 space-y-3">
+                <div class="flex justify-between items-center cursor-pointer select-none" onclick="toggleSection('sec-anak', 'btn-txt-anak', 'btn-icon-anak')">
+                    <h3 class="text-xs font-bold text-purple-900 uppercase tracking-wider font-heading">Kategori Anak & Remaja</h3>
+                    <button class="flex items-center gap-1 text-purple-700 font-bold text-xs font-heading bg-purple-50 px-2.5 py-1 rounded-lg">
+                        <span id="btn-txt-anak">Selengkapnya</span>
+                        <svg id="btn-icon-anak" class="w-3.5 h-3.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                </div>
+                <div id="sec-anak" class="hidden border-t border-gray-100 pt-3 space-y-2.5 transition-all duration-300">
+                    <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Balita / Batita</span><span id="stat-balita" class="font-bold text-purple-700 text-base">0</span></div>
+                    <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Pratama</span><span id="stat-pratama" class="font-bold text-purple-700 text-base">0</span></div>
+                    <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Madya</span><span id="stat-madya" class="font-bold text-purple-700 text-base">0</span></div>
+                    <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Taruna / Utama</span><span id="stat-taruna" class="font-bold text-purple-700 text-base">0</span></div>
+                    <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Remaja</span><span id="stat-remaja" class="font-bold text-purple-700 text-base">0</span></div>
+                </div>
             </div>
 
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-3">
-                <h3 class="text-xs font-bold text-purple-900 border-b pb-1 font-heading">Kategori Dewasa</h3>
-                <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Pemuda</span><span id="stat-pemuda" class="font-bold text-gray-900 text-base">0</span></div>
-                <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Dewasa</span><span id="stat-dewasa" class="font-bold text-gray-900 text-base">0</span></div>
+            <!-- KATEGORI DEWASA -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 space-y-3">
+                <div class="flex justify-between items-center cursor-pointer select-none" onclick="toggleSection('sec-dewasa', 'btn-txt-dewasa', 'btn-icon-dewasa')">
+                    <h3 class="text-xs font-bold text-purple-900 uppercase tracking-wider font-heading">Kategori Dewasa</h3>
+                    <button class="flex items-center gap-1 text-purple-700 font-bold text-xs font-heading bg-purple-50 px-2.5 py-1 rounded-lg">
+                        <span id="btn-txt-dewasa">Selengkapnya</span>
+                        <svg id="btn-icon-dewasa" class="w-3.5 h-3.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                </div>
+                <div id="sec-dewasa" class="hidden border-t border-gray-100 pt-3 space-y-2.5 transition-all duration-300">
+                    <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Pemuda</span><span id="stat-pemuda" class="font-bold text-gray-900 text-base">0</span></div>
+                    <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Dewasa</span><span id="stat-dewasa" class="font-bold text-gray-900 text-base">0</span></div>
+                </div>
             </div>
 
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-3">
-                <h3 class="text-xs font-bold text-purple-900 border-b pb-1 font-heading">Status Keanggotaan Keluarga</h3>
-                <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Keluarga Tetap</span><span id="stat-keluarga-tetap" class="font-bold text-emerald-600 text-base">0</span></div>
-                <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Keluarga Simpatisan</span><span id="stat-keluarga-simpatisan" class="font-bold text-amber-600 text-base">0</span></div>
+            <!-- STATUS KEANGGOTAAN KELUARGA -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 space-y-3">
+                <div class="flex justify-between items-center cursor-pointer select-none" onclick="toggleSection('sec-status', 'btn-txt-status', 'btn-icon-status')">
+                    <h3 class="text-xs font-bold text-purple-900 uppercase tracking-wider font-heading">Status Keanggotaan Keluarga</h3>
+                    <button class="flex items-center gap-1 text-purple-700 font-bold text-xs font-heading bg-purple-50 px-2.5 py-1 rounded-lg">
+                        <span id="btn-txt-status">Selengkapnya</span>
+                        <svg id="btn-icon-status" class="w-3.5 h-3.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                </div>
+                <div id="sec-status" class="hidden border-t border-gray-100 pt-3 space-y-2.5 transition-all duration-300">
+                    <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Keluarga Tetap</span><span id="stat-keluarga-tetap" class="font-bold text-emerald-600 text-base">0</span></div>
+                    <div class="flex justify-between text-sm"><span class="text-gray-600 font-medium">Keluarga Simpatisan</span><span id="stat-keluarga-simpatisan" class="font-bold text-amber-600 text-base">0</span></div>
+                </div>
             </div>
         </section>
 
@@ -179,7 +206,7 @@
             document.body.classList.remove('overflow-hidden');
         }
 
-        // FUNGSI TOGGLE KLIK UNTUK MENGONTROL BUKA TUTUP WARTA
+        // FUNGSI TOGGLE KHUSUS UNTUK DETAIL WARTA HARI INI
         function toggleWarta(idKegiatan) {
             const boxDetail = document.getElementById(`detail-${idKegiatan}`);
             const btnText = document.getElementById(`btn-text-${idKegiatan}`);
@@ -193,6 +220,23 @@
                 boxDetail.classList.add('hidden');
                 btnText.innerText = "Selengkapnya";
                 btnIcon.style.transform = "rotate(0deg)";
+            }
+        }
+
+        // FUNGSI TOGGLE GLOBAL UNTUK KOTAK DEMOGRAFI JEMAAT
+        function toggleSection(sectionId, textId, iconId) {
+            const target = document.getElementById(sectionId);
+            const txt = document.getElementById(textId);
+            const icon = document.getElementById(iconId);
+
+            if(target.classList.contains('hidden')) {
+                target.classList.remove('hidden');
+                txt.innerText = "Sembunyikan";
+                icon.style.transform = "rotate(180deg)";
+            } else {
+                target.classList.add('hidden');
+                txt.innerText = "Selengkapnya";
+                icon.style.transform = "rotate(0deg)";
             }
         }
 
@@ -248,20 +292,17 @@
                         
                         container.innerHTML += `
                             <div class="pb-2 space-y-3">
-                                <!-- Bagian Ringkasan Judul (Selalu Muncul) -->
                                 <div class="border-l-4 border-purple-600 pl-3">
                                     <p class="font-bold text-gray-950 text-base font-heading text-purple-950 leading-snug">${p.nama_kegiatan}</p>
                                     <p class="text-xs font-semibold text-gray-500 mt-0.5"> Jam ${time} WIT</p>
                                     ${p.keterangan ? `<p class="text-[11px] text-purple-700 italic mt-1 font-medium">* ${p.keterangan}</p>` : ''}
                                 </div>
                                 
-                                <!-- Tombol Selengkapnya / Buka Tutup -->
                                 <button onclick="toggleWarta('${uniqueId}')" class="w-full flex items-center justify-between py-2 px-3 bg-purple-50 hover:bg-purple-100/80 rounded-xl text-purple-700 font-bold text-xs font-heading transition cursor-pointer select-none">
                                     <span id="btn-text-${uniqueId}">Selengkapnya</span>
                                     <svg id="btn-icon-${uniqueId}" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </button>
 
-                                <!-- Bagian Detail Petugas (Tersembunyi Awalnya / Hidden) -->
                                 <div id="detail-${uniqueId}" class="hidden bg-gray-50 rounded-xl border border-gray-100 overflow-hidden divide-y divide-gray-200/60 text-xs transition-all duration-300">
                                     <div class="p-3 bg-white"><span class="font-bold text-gray-400 block text-[10px] uppercase tracking-wider font-heading mb-0.5">Khotbah</span><span class="text-gray-900 font-semibold text-sm">${p.pengkhotbah || '-'}</span></div>
                                     <div class="p-3 bg-white"><span class="font-bold text-gray-400 block text-[10px] uppercase tracking-wider font-heading mb-0.5">Liturgis/Pelayan</span><span class="text-gray-900 font-semibold text-sm">${p.pelayan_liturgi || '-'}</span></div>
@@ -339,7 +380,7 @@
                 const umur = calculateAge(j.tanggal_lahir);
                 
                 if (umur <= 3) balita++;
-                else if (umur >= 4 && umur <= 6) pratama++;
+                else if (umur >= 4 && uuid = 6 || umur <= 6) pratama++;
                 else if (umur >= 7 && umur <= 9) madya++;
                 else if (umur >= 10 && umur <= 12) taruna++;
                 else if (umur >= 13 && umur <= 16) remaja++;
