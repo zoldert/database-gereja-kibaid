@@ -105,9 +105,18 @@
                 </div>
             </div>
 
+            <!-- KATEGORI USIA ANAK DAN REMAJA YANG BARU -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-3">
-                <h3 class="text-sm font-bold text-purple-900 border-b pb-1">Kategori Usia</h3>
-                <div class="flex justify-between text-sm"><span>Anak-anak (0-16 thn)</span><span id="stat-anak" class="font-bold">0</span></div>
+                <h3 class="text-sm font-bold text-purple-900 border-b pb-1">Kategori Anak & Remaja</h3>
+                <div class="flex justify-between text-sm"><span>Balita/Batita (0-3 thn)</span><span id="stat-balita" class="font-bold text-purple-700">0</span></div>
+                <div class="flex justify-between text-sm"><span>Pratama (4-6 thn)</span><span id="stat-pratama" class="font-bold text-purple-700">0</span></div>
+                <div class="flex justify-between text-sm"><span>Madya (7-9 thn)</span><span id="stat-madya" class="font-bold text-purple-700">0</span></div>
+                <div class="flex justify-between text-sm"><span>Taruna/Utama (10-12 thn)</span><span id="stat-taruna" class="font-bold text-purple-700">0</span></div>
+                <div class="flex justify-between text-sm"><span>Remaja (13-16 thn)</span><span id="stat-remaja" class="font-bold text-purple-700">0</span></div>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-3">
+                <h3 class="text-sm font-bold text-purple-900 border-b pb-1">Kategori Dewasa</h3>
                 <div class="flex justify-between text-sm"><span>Pemuda (17-34 thn)</span><span id="stat-pemuda" class="font-bold">0</span></div>
                 <div class="flex justify-between text-sm"><span>Dewasa (35+ thn)</span><span id="stat-dewasa" class="font-bold">0</span></div>
             </div>
@@ -254,7 +263,8 @@
 
             let jiwa = data.length;
             let laki = 0, perempuan = 0, tetap = 0, simpatisan = 0;
-            let anak = 0, pemuda = 0, dewasa = 0;
+            let balita = 0, pratama = 0, madya = 0, taruna = 0, remaja = 0;
+            let pemuda = 0, dewasa = 0;
             let keluargaUnik = new Set();
             
             let jemaatUltahHariIni = [];
@@ -270,7 +280,14 @@
                 if (j.id_keluarga) keluargaUnik.add(j.id_keluarga);
 
                 const umur = calculateAge(j.tanggal_lahir);
-                if (umur <= 16) anak++;
+                
+                // Distribusi Logika Klaster Usia Anak & Remaja Baru
+                if (umur <= 3) balita++;
+                else if (umur >= 4 && umur <= 6) pratama++;
+                else if (umur >= 7 && umur <= 9) madya++;
+                else if (umur >= 10 && umur <= 12) taruna++;
+                else if (umur >= 13 && umur <= 16) remaja++;
+                // Klaster Pemuda dan Dewasa
                 else if (umur >= 17 && umur <= 34) pemuda++;
                 else if (umur >= 35) dewasa++;
 
@@ -295,7 +312,14 @@
             document.getElementById('stat-jiwa').innerText = jiwa;
             document.getElementById('stat-laki').innerText = laki;
             document.getElementById('stat-perempuan').innerText = perempuan;
-            document.getElementById('stat-anak').innerText = anak;
+            
+            // Render Angka ke Elemen Klasifikasi Usia Anak-anak
+            document.getElementById('stat-balita').innerText = balita;
+            document.getElementById('stat-pratama').innerText = pratama;
+            document.getElementById('stat-madya').innerText = madya;
+            document.getElementById('stat-taruna').innerText = taruna;
+            document.getElementById('stat-remaja').innerText = remaja;
+
             document.getElementById('stat-pemuda').innerText = pemuda;
             document.getElementById('stat-dewasa').innerText = dewasa;
             document.getElementById('stat-tetap').innerText = tetap;
