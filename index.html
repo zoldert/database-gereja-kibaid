@@ -198,21 +198,21 @@
                         const time = dateObj.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
                         
                         container.innerHTML += `
-                            <div class="border-b border-gray-150 pb-4 last:border-0 last:pb-0 space-y-2">
-                                <div class="border-l-4 border-purple-600 pl-3">
-                                    <p class="font-bold text-gray-950 text-sm font-serif-pairing">${p.nama_kegiatan} (${time} WIT)</p>
+                            <div class="pb-2 space-y-3">
+                                <div class="border-l-4 border-purple-600 pl-3 mb-4">
+                                    <p class="font-bold text-gray-950 text-base font-serif-pairing">${p.nama_kegiatan} (${time} WIT)</p>
                                     ${p.keterangan ? `<p class="text-[11px] text-purple-700 italic mt-0.5">* ${p.keterangan}</p>` : ''}
                                 </div>
-                                <div class="grid grid-cols-1 gap-1 text-xs text-gray-600 bg-gray-50 p-3 rounded-xl border border-gray-100">
-                                    <p>- <strong>Khotbah:</strong> ${p.pengkhotbah || '-'}</p>
-                                    <p>- <strong>Liturgis/Pelayan:</strong> ${p.pelayan_liturgi || '-'}</p>
-                                    <p>- <strong>Pemusik:</strong> ${p.pemusik || '-'}</p>
-                                    <p>- <strong>Pendoa Syafaat:</strong> ${p.pendoa_syafaat || '-'}</p>
-                                    <p>- <strong>Kolektan:</strong> ${p.kolektan || '-'}</p>
-                                    <p>- <strong>Operator LCD:</strong> ${p.operator_lcd || '-'}</p>
-                                    <p>- <strong>Doa Persembahan:</strong> ${p.doa_persembahan || '-'}</p>
-                                    <p>- <strong>Pembaca Warta:</strong> ${p.pembaca_warta || '-'}</p>
-                                    <p>- <strong>Penyambut Jemaat:</strong> ${p.penyambut_jemaat || '-'}</p>
+                                <div class="bg-gray-50 rounded-xl border border-gray-100 overflow-hidden divide-y divide-gray-200/60 text-xs">
+                                    <div class="p-3 bg-white"><span class="font-bold text-gray-500 block mb-0.5">Khotbah</span><span class="text-gray-900 font-medium">${p.pengkhotbah || '-'}</span></div>
+                                    <div class="p-3 bg-white"><span class="font-bold text-gray-500 block mb-0.5">Liturgis/Pelayan</span><span class="text-gray-900 font-medium">${p.pelayan_liturgi || '-'}</span></div>
+                                    <div class="p-3 bg-white"><span class="font-bold text-gray-500 block mb-0.5">Pemusik</span><span class="text-gray-900 font-medium">${p.pemusik || '-'}</span></div>
+                                    <div class="p-3 bg-white"><span class="font-bold text-gray-500 block mb-0.5">Pendoa Syafaat</span><span class="text-gray-900 font-medium">${p.pendoa_syafaat || '-'}</span></div>
+                                    <div class="p-3 bg-white"><span class="font-bold text-gray-500 block mb-0.5">Kolektan</span><span class="text-gray-900 font-medium">${p.kolektan || '-'}</span></div>
+                                    <div class="p-3 bg-white"><span class="font-bold text-gray-500 block mb-0.5">Operator LCD</span><span class="text-gray-900 font-medium">${p.operator_lcd || '-'}</span></div>
+                                    <div class="p-3 bg-white"><span class="font-bold text-gray-500 block mb-0.5">Doa Persembahan</span><span class="text-gray-900 font-medium">${p.doa_persembahan || '-'}</span></div>
+                                    <div class="p-3 bg-white"><span class="font-bold text-gray-500 block mb-0.5">Pembaca Warta</span><span class="text-gray-900 font-medium">${p.pembaca_warta || '-'}</span></div>
+                                    <div class="p-3 bg-white"><span class="font-bold text-gray-500 block mb-0.5">Penyambut Jemaat</span><span class="text-gray-900 font-medium">${p.penyambut_jemaat || '-'}</span></div>
                                 </div>
                             </div>
                         `;
