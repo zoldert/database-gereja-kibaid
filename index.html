@@ -55,11 +55,11 @@
     </div>
 
     <script>
-        // Seluruh tautan sudah dikonversi resmi ke TSV (Tab-Separated Values)
-        const URL_BERITA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1711430912&single=true&output=tsv";[cite: 2]
-        const URL_PELAYANAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=0&single=true&output=tsv";[cite: 2]
-        const URL_GALERI = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1957154134&single=true&output=tsv";[cite: 2]
-        const URL_FAQ = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=676534391&single=true&output=tsv";[cite: 2]
+        // URL bersih format TSV tanpa teks tambahan apa pun
+        const URL_BERITA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1711430912&single=true&output=tsv";
+        const URL_PELAYANAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=0&single=true&output=tsv";
+        const URL_GALERI = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1957154134&single=true&output=tsv";
+        const URL_FAQ = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=676534391&single=true&output=tsv";
 
         let currentSlideIdx = 0;
 
@@ -75,12 +75,10 @@
             return str.trim().replace(/^["']|["']$/g, '').trim();
         }
 
-        // Memproses data mentah TSV dengan pemisah tombol Tab (\t)
         async function fetchTSV(url) {
             const res = await fetch(url + `&t=${new Date().getTime()}`);
             const text = await res.text();
             
-            // Memisahkan baris berdasarkan tab (\t)
             const lines = text.split("\n").map(line => line.replace('\r', '').split("\t"));
             const headers = lines[0].map(h => cleanQuotes(h));
             const result = [];
@@ -100,7 +98,6 @@
             try {
                 document.getElementById('hari-tanggal-berjalan').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
                 
-                // Seluruh pemanggilan data beralih ke pembaca TSV
                 const [berita, pelayanan, galeri, faq] = await Promise.all([
                     fetchTSV(URL_BERITA),
                     fetchTSV(URL_PELAYANAN),
@@ -167,7 +164,7 @@
                             currentSlideIdx = (currentSlideIdx + 1) % reversedValid.length;
                             slides[currentSlideIdx].classList.add('active');
                         }
-                    }, 7000); // Durasi transisi berita disetel otomatis per 7 detik
+                    }, 7000);
                 }
             }
         }
