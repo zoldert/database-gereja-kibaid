@@ -12,9 +12,17 @@
         .slider-container { position: relative; width: 100%; display: grid; grid-template-columns: 100%; }
         .slide-item { grid-column: 1; grid-row: 1; width: 100%; opacity: 0; pointer-events: none; transition: opacity 0.8s ease-in-out; }
         .slide-item.active { opacity: 1; pointer-events: auto; }
+        
+        /* Efek Kaca Transparan (Glassmorphism) */
+        .glass-box {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased">
+<body class="bg-purple-50/30 text-gray-800 antialiased">
 
     <header class="sticky top-0 bg-purple-700 py-5 px-4 text-center text-white shadow-md z-50 max-w-md mx-auto flex flex-col items-center gap-1">
         <img src="https://i.ibb.co.com/TxJcbZmH/logo-gereja-kibaid.png" class="w-14 h-14 rounded-full object-cover border-2 border-amber-400 mb-1 shadow-md bg-white">
@@ -28,7 +36,7 @@
 
         <section class="space-y-3">
             <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Info Terkini</h2>
-            <div id="daftar-berita" class="slider-container rounded-2xl shadow-sm border border-gray-100 bg-white min-h-[140px]"></div>
+            <div id="daftar-berita" class="slider-container rounded-2xl shadow-md glass-box min-h-[100px]"></div>
         </section>
 
         <section class="space-y-4">
@@ -55,20 +63,12 @@
     </div>
 
     <script>
-        // URL bersih format TSV tanpa teks tambahan apa pun
-        const URL_BERITA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1711430912&single=true&output=tsv";
-        const URL_PELAYANAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=0&single=true&output=tsv";
-        const URL_GALERI = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1957154134&single=true&output=tsv";
-        const URL_FAQ = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=676534391&single=true&output=tsv";
+        const URL_BERITA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1711430912&single=true&output=tsv";[cite: 2]
+        const URL_PELAYANAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=0&single=true&output=tsv";[cite: 2]
+        const URL_GALERI = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1957154134&single=true&output=tsv";[cite: 2]
+        const URL_FAQ = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=676534391&single=true&output=tsv";[cite: 2]
 
         let currentSlideIdx = 0;
-
-        function formatTanggalIndo(dateString) {
-            if (!dateString) return "";
-            const date = new Date(dateString);
-            if (isNaN(date.getTime())) return dateString;
-            return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-        }
 
         function cleanQuotes(str) {
             if (!str) return "";
@@ -78,7 +78,6 @@
         async function fetchTSV(url) {
             const res = await fetch(url + `&t=${new Date().getTime()}`);
             const text = await res.text();
-            
             const lines = text.split("\n").map(line => line.replace('\r', '').split("\t"));
             const headers = lines[0].map(h => cleanQuotes(h));
             const result = [];
@@ -150,9 +149,18 @@
                 const valid = data.filter(b => b.aktif && cleanQuotes(b.aktif).toUpperCase() === "TRUE");
                 const reversedValid = [...valid].reverse();
                 
+                if (reversedValid.length === 0) {
+                    cont.innerHTML = '<p class="text-gray-400 text-center text-sm italic p-5">Tidak ada info terkini.</p>';
+                    return;
+                }
+
                 reversedValid.forEach((b, i) => {
-                    const tglRapi = formatTanggalIndo(b.tanggal_publikasi);
-                    cont.innerHTML += `<div id="slide-${i}" class="slide-item p-5 ${i===0 ? 'active':''}"><h3 class="font-bold text-gray-950 text-base font-heading">${b.judul}</h3><span class="text-[10px] text-gray-400 block mb-2">📅 ${tglRapi}</span><p class="text-sm text-gray-600">${b.isi_konten}</p></div>`;
+                    const nomorSlide = b.no ? `#${b.no}` : `#${i + 1}`;
+                    cont.innerHTML += `
+                        <div id="slide-${i}" class="slide-item p-5 flex gap-3 items-start ${i===0 ? 'active':''}">
+                            <span class="font-heading font-extrabold text-purple-700 bg-purple-100/80 px-2 py-0.5 rounded-md text-xs mt-0.5">${nomorSlide}</span>
+                            <p class="text-sm text-gray-800 leading-relaxed font-medium">${b.isi_konten}</p>
+                        </div>`;
                 });
                 
                 if (reversedValid.length > 1) {
@@ -188,9 +196,9 @@
         function renderGaleri(data) {
             const cont = document.getElementById('grid-galeri');
             if (Array.isArray(data)) {
-                [...data].reverse().slice(0, 4).forEach(g => {
-                    const tglRapi = formatTanggalIndo(g.tanggal_kegiatan);
-                    cont.innerHTML += `<div class="bg-white rounded-xl shadow-sm border border-gray-100 cursor-pointer overflow-hidden" onclick="openLightbox('${g.url_foto}')"><img src="${g.url_foto}" class="w-full h-28 object-cover"><div class="p-2"><p class="text-xs font-bold truncate font-heading text-gray-950">${g.judul_kegiatan}</p><p class="text-[9px] text-gray-400">📅 ${tglRapi}</p></div></div>`;
+                const validGaleri = data.filter(g => g.url_foto && g.judul_kegiatan);
+                [...validGaleri].reverse().slice(0, 4).forEach(g => {
+                    cont.innerHTML += `<div class="bg-white rounded-xl shadow-sm border border-gray-100 cursor-pointer overflow-hidden" onclick="openLightbox('${g.url_foto}')"><img src="${g.url_foto}" class="w-full h-28 object-cover"><div class="p-2"><p class="text-xs font-bold truncate font-heading text-gray-950">${g.judul_kegiatan}</p></div></div>`;
                 });
             }
         }
