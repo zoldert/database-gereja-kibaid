@@ -55,8 +55,8 @@
     </div>
 
     <script>
-        // Tautan API sudah diperbaiki dengan menghapus '/exec' di bagian paling ujungnya
-        const API = "https://script.google.com/macros/s/AKfycbxc4dDJmnSU48Ij8sBTb_Vsrhrz2y2jeUJHba34IQLx9M4mtV1mk7jqBpPHPDqYIWzGjQ";
+        // Menggunakan tautan /exec yang benar dan valid sesuai deployment Anda
+        const API = "https://script.google.com/macros/s/AKfycbxc4dDJmnSU48Ij8sBTb_Vsrhrz2y2jeUJHba34IQLx9M4mtV1mk7jqBpPHPDqYIWzGjQ/exec";
         let currentSlideIdx = 0;
 
         function formatTanggalIndo(dateString) {
@@ -66,15 +66,22 @@
             return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
         }
 
+        // Fungsi pembantu fetch khusus untuk menangani redirect dari Google Apps Script secara aman
+        async function fetchGoogleData(sheetName) {
+            const res = await fetch(`${API}?sheet=${sheetName}`);
+            if (!res.ok) throw new Error("Network response error");
+            return res.json();
+        }
+
         async function initApp() {
             try {
                 document.getElementById('hari-tanggal-berjalan').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
                 
                 const [berita, pelayanan, galeri, faq] = await Promise.all([
-                    fetch(`${API}?sheet=berita`).then(r => r.json()),
-                    fetch(`${API}?sheet=pelayanan`).then(r => r.json()),
-                    fetch(`${API}?sheet=galeri`).then(r => r.json()),
-                    fetch(`${API}?sheet=faq`).then(r => r.json())
+                    fetchGoogleData('berita'),
+                    fetchGoogleData('pelayanan'),
+                    fetchGoogleData('galeri'),
+                    fetchGoogleData('faq')
                 ]);
                 
                 renderBerita(berita);
@@ -121,7 +128,7 @@
                 const valid = data.filter(b => String(b.aktif).toUpperCase() === "TRUE");
                 valid.reverse().forEach((b, i) => {
                     const tglRapi = formatTanggalIndo(b.tanggal_publikasi);
-                    cont.innerHTML += `<div id="slide-${i}" class="slide-item p-5 ${i===0 ? 'active':''}"><h3 class="font-bold text-gray-950 text-base">${b.judul}</h3><span class="text-[10px] text-gray-400 block mb-2">📅 ${tglRapi}</span><p class="text-sm text-gray-600">${b.isi_konten}</p></div>`;
+                    cont.innerHTML += `<div id="slide-${i}" class="slide-item p-5 ${i===0 ? 'active':''}"><h3 class="font-bold text-gray-950 text-base font-heading">${b.judul}</h3><span class="text-[10px] text-gray-400 block mb-2">📅 ${tglRapi}</span><p class="text-sm text-gray-600">${b.isi_konten}</p></div>`;
                 });
                 if (valid.length > 1) setInterval(() => {
                     const slides = document.querySelectorAll('.slide-item');
@@ -143,10 +150,10 @@
                     const d = new Date(p.tanggal_waktu);
                     return d.getDate() === hari.getDate() && d.getMonth() === hari.getMonth() && d.getFullYear() === hari.getFullYear();
                 });
-                if (today.length === 0) cont.innerHTML = '<p class="text-gray-400 text-center text-sm">Tidak ada jadwal hari ini.</p>';
-                else today.forEach(p => cont.innerHTML += `<div class="border-l-4 border-purple-600 pl-3"><p class="font-bold text-gray-950">${p.nama_kegiatan}</p></div>`);
+                if (today.length === 0) cont.innerHTML = '<p class="text-gray-400 text-center text-sm italic py-2">Tidak ada jadwal hari ini.</p>';
+                else today.forEach(p => cont.innerHTML += `<div class="border-l-4 border-purple-600 pl-3"><p class="font-bold text-gray-950 font-heading text-purple-950">${p.nama_kegiatan}</p></div>`);
             } else {
-                cont.innerHTML = '<p class="text-gray-400 text-center text-sm">Tidak ada jadwal hari ini.</p>';
+                cont.innerHTML = '<p class="text-gray-400 text-center text-sm italic py-2">Tidak ada jadwal hari ini.</p>';
             }
         }
 
@@ -155,7 +162,7 @@
             if (Array.isArray(data)) {
                 data.reverse().slice(0, 4).forEach(g => {
                     const tglRapi = formatTanggalIndo(g.tanggal_kegiatan);
-                    cont.innerHTML += `<div class="bg-white rounded-xl shadow-sm border border-gray-100 cursor-pointer overflow-hidden" onclick="openLightbox('${g.url_foto}')"><img src="${g.url_foto}" class="w-full h-28 object-cover"><div class="p-2"><p class="text-xs font-bold truncate">${g.judul_kegiatan}</p><p class="text-[9px] text-gray-400">📅 ${tglRapi}</p></div></div>`;
+                    cont.innerHTML += `<div class="bg-white rounded-xl shadow-sm border border-gray-100 cursor-pointer overflow-hidden" onclick="openLightbox('${g.url_foto}')"><img src="${g.url_foto}" class="w-full h-28 object-cover"><div class="p-2"><p class="text-xs font-bold truncate font-heading text-gray-950">${g.judul_kegiatan}</p><p class="text-[9px] text-gray-400">📅 ${tglRapi}</p></div></div>`;
                 });
             }
         }
