@@ -33,6 +33,12 @@
             <div id="hari-tanggal-berjalan" class="text-[10px] bg-purple-800/50 px-3 py-0.5 rounded-full mt-1">Memuat...</div>
         </header>
 
+        <!-- Teks Berjalan Ulang Tahun (Antara Header dan Info Terkini) -->
+        <div id="wrapper-ultah" class="hidden w-full max-w-md mx-auto bg-amber-100 border-b border-amber-200 py-2 px-4 text-xs font-semibold text-amber-900 flex items-center shadow-sm">
+            <span class="flex-shrink-0 bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded-full mr-2 font-bold animate-pulse">🎉 HUT</span>
+            <marquee id="teks-berjalan-ultah" scrollamount="4" behavior="scroll" direction="left" class="w-full">Memuat data ulang tahun...</marquee>
+        </div>
+
         <main class="p-4 max-w-md mx-auto space-y-6 pb-6">
             <div id="loading" class="text-center py-6 font-semibold text-purple-900 text-sm">⏳ Memuat data...</div>
 
@@ -75,6 +81,8 @@
         const URL_PELAYANAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=0&single=true&output=tsv";
         const URL_GALERI = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1957154134&single=true&output=tsv";
         const URL_FAQ = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=676534391&single=true&output=tsv";
+        // Menambahkan link data jemaat otomatis dari spreadsheet Anda
+        const URL_JEMAAT = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1910767742&single=true&output=tsv";
 
         let currentSlideIdx = 0;
 
@@ -112,13 +120,15 @@
             try {
                 document.getElementById('hari-tanggal-berjalan').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
                 
-                const [berita, pelayanan, galeri, faq] = await Promise.all([
+                const [berita, pelayanan, galeri, faq, jemaat] = await Promise.all([
                     fetchTSV(URL_BERITA),
                     fetchTSV(URL_PELAYANAN),
                     fetchTSV(URL_GALERI),
-                    fetchTSV(URL_FAQ)
+                    fetchTSV(URL_FAQ),
+                    fetchTSV(URL_JEMAAT)
                 ]);
                 
+                renderUltah(jemaat);
                 renderBerita(berita);
                 renderPelayanan(pelayanan);
                 renderGaleri(galeri);
@@ -129,6 +139,39 @@
                 document.getElementById('loading').innerText = "❌ Gagal memuat data."; 
                 console.error(e); 
             }
+        }
+
+        function renderUltah(data) {
+            const wrapper = document.getElementById('wrapper-ultah');
+            const marquee = document.getElementById('teks-berjalan-ultah');
+            
+            if (!Array.isArray(data) || data.length === 0) {
+                wrapper.classList.add('hidden');
+                return;
+            }
+
+            const hariIni = new Date();
+            const tanggalHariIni = hariIni.getDate();
+            const bulanHariIni = hariIni.getMonth();
+
+            // Menyaring jemaat yang berulang tahun hari ini
+            const jemaatUltah = data.filter(j => {
+                const tglMentah = j.tanggal_lahir || j.tanggal || '';
+                if (!tglMentah) return false;
+                const d = new Date(tglMentah);
+                if (isNaN(d.getTime())) return false;
+                return d.getDate() === tanggalHariIni && d.getMonth() === bulanHariIni;
+            });
+
+            if (jemaatUltah.length > 0) {
+                const daftarNama = jemaatUltah.map(j => j.nama || j.nama_lengkap || '').filter(n => n !== '');
+                if (daftarNama.length > 0) {
+                    marquee.innerText = `Selamat Ulang Tahun kepada Jemaat: ${daftarNama.join(', ')} 🥳 Semoga Tuhan Yesus selalu memberkati kesehatan, umur panjang, dan menyertai dalam setiap langkah kehidupan jemaat sekalian!`;
+                    wrapper.classList.remove('hidden');
+                    return;
+                }
+            }
+            wrapper.classList.add('hidden');
         }
 
         function renderFAQ(data) {
@@ -214,7 +257,6 @@
             if (Array.isArray(data)) {
                 const validGaleri = data.filter(g => g.url_foto && g.judul_kegiatan);
                 [...validGaleri].reverse().slice(0, 4).forEach(g => {
-                    // Cek toleransi penamaan kolom tanggal baik 'tanggal_kegiatan' maupun 'tanggal'
                     const rawDate = g.tanggal_kegiatan || g.tanggal || '';
                     const tglRapi = formatTanggalIndo(rawDate);
                     
