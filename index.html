@@ -55,11 +55,10 @@
     </div>
 
     <script>
-        // Tautannya sudah dibersihkan total dari karakter pengganggu
-        const URL_BERITA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1711430912&single=true&output=csv";
-        const URL_PELAYANAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=0&single=true&output=csv";
-        const URL_GALERI = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1957154134&single=true&output=csv";
-        const URL_FAQ = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=676534391&single=true&output=csv";
+        const URL_BERITA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1711430912&single=true&output=csv";[cite: 1]
+        const URL_PELAYANAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=0&single=true&output=csv";[cite: 1]
+        const URL_GALERI = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1957154134&single=true&output=csv";[cite: 1]
+        const URL_FAQ = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=676534391&single=true&output=csv";[cite: 1]
 
         let currentSlideIdx = 0;
 
@@ -72,7 +71,8 @@
 
         function cleanQuotes(str) {
             if (!str) return "";
-            return str.trim().replace(/^["']|["']$/g, '');
+            // Menghapus tanda petik pembungkus dan spasi di ujung karakter teks CSV
+            return str.trim().replace(/^["']|["']$/g, '').trim();
         }
 
         async function fetchCSV(url) {
@@ -147,7 +147,8 @@
             const cont = document.getElementById('daftar-berita');
             cont.innerHTML = '';
             if (Array.isArray(data)) {
-                const valid = data.filter(b => b.aktif && b.aktif.toString().toUpperCase().trim() === "TRUE");
+                // Diperketat dengan metode pembersihan .trim() ganda agar kata TRUE terbaca sempurna
+                const valid = data.filter(b => b.aktif && cleanQuotes(b.aktif).toUpperCase() === "TRUE");
                 const reversedValid = [...valid].reverse();
                 
                 reversedValid.forEach((b, i) => {
@@ -164,7 +165,7 @@
                             currentSlideIdx = (currentSlideIdx + 1) % reversedValid.length;
                             slides[currentSlideIdx].classList.add('active');
                         }
-                    }, 7000);
+                    }, 7000); // Berganti otomatis setiap 7 detik
                 }
             }
         }
