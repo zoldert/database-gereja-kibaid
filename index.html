@@ -18,22 +18,24 @@
         .font-heading { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
         }
-        /* Perbaikan Sistem Slider Agar Teks Mengikuti Lebar Kotak Putih */
+        /* Menggunakan Sistem Grid Bertumpuk untuk Menghindari Teks Terpotong */
         .slider-container {
             position: relative;
-            overflow: hidden;
             width: 100%;
-        }
-        .slider-track {
-            display: flex;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            display: grid;
+            grid-template-columns: 100%;
         }
         .slide-item {
-            flex: 0 0 100%;
+            grid-column: 1;
+            grid-row: 1;
             width: 100%;
-            min-width: 100%;
-            max-width: 100%;
-            box-sizing: border-box;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s ease-in-out;
+        }
+        .slide-item.active {
+            opacity: 1;
+            pointer-events: auto;
         }
     </style>
 </head>
@@ -67,10 +69,8 @@
         <!-- ================= 1. INFO TERKINI / BERITA ================= -->
         <section class="space-y-3">
             <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Info Terkini</h2>
-            <div class="slider-container rounded-2xl shadow-sm border border-gray-100 bg-white">
-                <div id="daftar-berita" class="slider-track">
-                    <!-- Konten Berita Dinamis -->
-                </div>
+            <div id="daftar-berita" class="slider-container rounded-2xl shadow-sm border border-gray-100 bg-white min-h-[140px]">
+                <!-- Konten Berita Dinamis -->
             </div>
         </section>
 
@@ -344,6 +344,7 @@
             }
         }
 
+        // MANAGEMENT SLIDER DENGAN SISTEM TIMPA FADE OPACITY
         let currentSlideIdx = 0;
         let slideIntervalId = null;
 
@@ -351,12 +352,17 @@
             if (totalSlides <= 1) return;
             if (slideIntervalId) clearInterval(slideIntervalId);
             
-            const track = document.getElementById('daftar-berita');
-            
             slideIntervalId = setInterval(() => {
+                // Sembunyikan slide aktif saat ini
+                const prevSlide = document.getElementById(`slide-${currentSlideIdx}`);
+                if(prevSlide) prevSlide.classList.remove('active');
+                
                 currentSlideIdx = (currentSlideIdx + 1) % totalSlides;
-                track.style.transform = `translateX(-${currentSlideIdx * 100}%)`;
-            }, 10000); // 10 Detik
+                
+                // Munculkan slide berikutnya dengan transisi fade
+                const nextSlide = document.getElementById(`slide-${currentSlideIdx}`);
+                if(nextSlide) nextSlide.classList.add('active');
+            }, 10000); // Kunci di 10 Detik
         }
 
         function renderBerita(data) {
@@ -380,14 +386,14 @@
                             if (selisihHari > 7) return; 
                         }
 
-                        // Perubahan struktur div pembungkus teks agar 100% melipat ke bawah mengikuti card putih
+                        // Slide pertama otomatis mendapat kelas 'active'
+                        const activeClass = validBeritaCount === 0 ? 'active' : '';
+
                         container.innerHTML += `
-                            <div class="slide-item p-5 min-h-[140px] flex flex-col justify-between overflow-hidden">
-                                <div class="w-full flex flex-col">
-                                    <h3 class="font-bold text-gray-950 text-base font-heading break-all max-w-full">${b.judul}</h3>
-                                    <span class="text-[10px] text-gray-400 block mb-2 font-medium">📅 ${b.tanggal_publikasi || ''}</span>
-                                    <p class="text-sm text-gray-600 leading-relaxed font-normal overflow-wrap-break-word break-words max-w-full">${b.isi_konten}</p>
-                                </div>
+                            <div id="slide-${validBeritaCount}" class="slide-item p-5 min-h-[140px] ${activeClass}">
+                                <h3 class="font-bold text-gray-950 text-base font-heading">${b.judul}</h3>
+                                <span class="text-[10px] text-gray-400 block mb-2 font-medium">📅 ${b.tanggal_publikasi || ''}</span>
+                                <p class="text-sm text-gray-600 leading-relaxed font-normal">${b.isi_konten}</p>
                             </div>
                         `;
                         validBeritaCount++;
@@ -396,10 +402,9 @@
             }
 
             if (validBeritaCount === 0) {
-                container.innerHTML = '<div class="slide-item p-5 text-gray-400 text-sm italic text-center w-full">Belum ada informasi terbaru minggu ini.</div>';
+                container.innerHTML = '<div class="p-5 text-gray-400 text-sm italic text-center w-full">Belum ada informasi terbaru minggu ini.</div>';
             } else {
                 currentSlideIdx = 0;
-                document.getElementById('daftar-berita').style.width = `${validBeritaCount * 100}%`;
                 runInfoSlider(validBeritaCount);
             }
         }
