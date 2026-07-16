@@ -56,7 +56,7 @@
 
     <script>
         // MASUKKAN URL BARU HASIL "NEW DEPLOYMENT" ANDA DI SINI
-        const API = "https://script.google.com/macros/s/AKfycbxDuBBTmdtGMD0ni9PWVhvtmjEfX6MVwamVSLjXnjzhPg2MB027LWZrPecZtU25hxMIdg/exec";
+        const API = "https://script.google.com/macros/s/AKfycbyoR7AXVDHB0N302hemy2Rwl9q8WywdzNxsSnlbukZ--rgDUob6AHrHwzMVyagzue14_Q/exec";
         let currentSlideIdx = 0;
 
         function formatTanggalIndo(dateString) {
@@ -66,16 +66,27 @@
             return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
         }
 
+        // Fungsi pembantu fetch khusus ekstraksi teks dari HtmlOutput Google
+        async function fetchGoogleSheets(sheetName) {
+            const response = await fetch(`${API}?sheet=${sheetName}`);
+            const htmlText = await response.text();
+            
+            // Mengekstrak JSON bersih dari dalam dokumen respon Google
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlText, 'text/html');
+            const bodyContent = doc.body.textContent || doc.body.innerText;
+            return JSON.parse(bodyContent.trim());
+        }
+
         async function initApp() {
             try {
                 document.getElementById('hari-tanggal-berjalan').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
                 
-                // Kembali menggunakan fetch murni yang jauh lebih stabil
                 const [berita, pelayanan, galeri, faq] = await Promise.all([
-                    fetch(`${API}?sheet=berita`).then(r => r.json()),
-                    fetch(`${API}?sheet=pelayanan`).then(r => r.json()),
-                    fetch(`${API}?sheet=galeri`).then(r => r.json()),
-                    fetch(`${API}?sheet=faq`).then(r => r.json())
+                    fetchGoogleSheets('berita'),
+                    fetchGoogleSheets('pelayanan'),
+                    fetchGoogleSheets('galeri'),
+                    fetchGoogleSheets('faq')
                 ]);
                 
                 renderBerita(berita);
