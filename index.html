@@ -55,8 +55,8 @@
     </div>
 
     <script>
-        // URL API Anda sudah diperbarui dengan huruf kapital 'W' yang benar
-        const API = "https://script.google.com/macros/s/AKfycbxc4dDJmnSU48Ij8sBTb_Vsrhrz2y2jeUJHba34IQLx9M4mtV1mk7jqBpPHPDqYlWzGjW/exec";
+        // MASUKKAN URL BARU HASIL "NEW DEPLOYMENT" ANDA DI SINI
+        const API = "https://script.google.com/macros/s/AKfycbxDuBBTmdtGMD0ni9PWVhvtmjEfX6MVwamVSLjXnjzhPg2MB027LWZrPecZtU25hxMIdg/exec";
         let currentSlideIdx = 0;
 
         function formatTanggalIndo(dateString) {
@@ -66,34 +66,16 @@
             return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
         }
 
-        // Fungsi Request Data Berbasis JSONP untuk menghindari CORS Block
-        function requestJsonp(sheetName) {
-            return new Promise((resolve, reject) => {
-                const callbackName = 'callback_' + sheetName + '_' + Math.floor(Math.random() * 100000);
-                window[callbackName] = function(data) {
-                    resolve(data);
-                    delete window[callbackName];
-                    const scriptEl = document.getElementById(callbackName);
-                    if (scriptEl) scriptEl.remove();
-                };
-                
-                const script = document.createElement('script');
-                script.id = callbackName;
-                script.src = `${API}?sheet=${sheetName}&callback=${callbackName}`;
-                script.onerror = () => reject(new Error(`Gagal memuat sheet ${sheetName}`));
-                document.body.appendChild(script);
-            });
-        }
-
         async function initApp() {
             try {
                 document.getElementById('hari-tanggal-berjalan').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
                 
+                // Kembali menggunakan fetch murni yang jauh lebih stabil
                 const [berita, pelayanan, galeri, faq] = await Promise.all([
-                    requestJsonp('berita'),
-                    requestJsonp('pelayanan'),
-                    requestJsonp('galeri'),
-                    requestJsonp('faq')
+                    fetch(`${API}?sheet=berita`).then(r => r.json()),
+                    fetch(`${API}?sheet=pelayanan`).then(r => r.json()),
+                    fetch(`${API}?sheet=galeri`).then(r => r.json()),
+                    fetch(`${API}?sheet=faq`).then(r => r.json())
                 ]);
                 
                 renderBerita(berita);
