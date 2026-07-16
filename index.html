@@ -52,6 +52,12 @@
         </section>
     </main>
 
+    <!-- LIGHTBOX MODAL -->
+    <div id="lightbox-modal" class="hidden fixed inset-0 bg-black/95 z-50 flex flex-col justify-center items-center p-4" onclick="closeLightbox()">
+        <button class="absolute top-6 right-6 text-white text-2xl font-light bg-white/10 w-10 h-10 rounded-full flex justify-center items-center">&times;</button>
+        <img id="lightbox-img" src="" class="max-w-full max-h-[75vh] object-contain rounded-lg shadow-2xl">
+    </div>
+
     <script>
         const API = "https://sheetdb.io/api/v1/oq2dn8eyynehu";
         let currentSlideIdx = 0;
@@ -70,6 +76,15 @@
                 renderGaleri(galeri);
                 document.getElementById('loading').classList.add('hidden');
             } catch (e) { document.getElementById('loading').innerText = "❌ Gagal memuat data."; }
+        }
+
+        function openLightbox(url) {
+            document.getElementById('lightbox-img').src = url;
+            document.getElementById('lightbox-modal').classList.remove('hidden');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox-modal').classList.add('hidden');
         }
 
         function toggleFAQ(id) {
@@ -102,7 +117,7 @@
 
         function renderGaleri(data) {
             const cont = document.getElementById('grid-galeri');
-            data.reverse().slice(0, 4).forEach(g => cont.innerHTML += `<div class="bg-white rounded-xl shadow-sm border"><img src="${g.url_foto}" class="w-full h-28 object-cover"><div class="p-2"><p class="text-xs font-bold truncate">${g.judul_kegiatan}</p><p class="text-[9px] text-gray-400">📅 ${g.tanggal_kegiatan}</p></div></div>`);
+            data.reverse().slice(0, 4).forEach(g => cont.innerHTML += `<div class="bg-white rounded-xl shadow-sm border border-gray-100 cursor-pointer overflow-hidden" onclick="openLightbox('${g.url_foto}')"><img src="${g.url_foto}" class="w-full h-28 object-cover"><div class="p-2"><p class="text-xs font-bold truncate">${g.judul_kegiatan}</p><p class="text-[9px] text-gray-400">📅 ${g.tanggal_kegiatan}</p></div></div>`);
         }
         window.onload = initApp;
     </script>
