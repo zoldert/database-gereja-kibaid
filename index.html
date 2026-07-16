@@ -17,7 +17,7 @@
 <body class="bg-gray-50 text-gray-800 antialiased">
 
     <header class="sticky top-0 bg-purple-700 py-5 px-4 text-center text-white shadow-md z-50 max-w-md mx-auto flex flex-col items-center gap-1">
-        <img src="https://i.ibb.co.com/TxJcbZmH/logo-repositori-kibaid.png" onerror="this.src='https://i.ibb.co.com/TxJcbZmH/logo-gereja-kibaid.png'" class="w-14 h-14 rounded-full object-cover border-2 border-amber-400 mb-1 shadow-md bg-white">
+        <img src="https://i.ibb.co.com/TxJcbZmH/logo-gereja-kibaid.png" class="w-14 h-14 rounded-full object-cover border-2 border-amber-400 mb-1 shadow-md bg-white">
         <h1 class="text-lg font-extrabold font-heading text-amber-300 uppercase">GEREJA KIBAID</h1>
         <h2 class="text-xs font-bold font-heading text-white/90 uppercase">JEMAAT AMBON KOTA</h2>
         <div id="hari-tanggal-berjalan" class="text-[10px] bg-purple-800/50 px-3 py-0.5 rounded-full mt-1">Memuat...</div>
@@ -55,9 +55,9 @@
     </div>
 
     <script>
-        const API = "https://script.google.com/macros/s/AKfycbxc4dDJmnSU48Ij8sBTb_Vsrhrz2y2jeUJHba34IQLx9M4mtV1mk7jqBpPHPDqYIWzGjQ/exec";
+        // URL API Anda sudah diperbarui dengan huruf kapital 'W' yang benar
+        const API = "https://script.google.com/macros/s/AKfycbxc4dDJmnSU48Ij8sBTb_Vsrhrz2y2jeUJHba34IQLx9M4mtV1mk7jqBpPHPDqYlWzGjW/exec";
         let currentSlideIdx = 0;
-        let fetchedData = {};
 
         function formatTanggalIndo(dateString) {
             if (!dateString) return "";
@@ -73,7 +73,8 @@
                 window[callbackName] = function(data) {
                     resolve(data);
                     delete window[callbackName];
-                    document.getElementById(callbackName).remove();
+                    const scriptEl = document.getElementById(callbackName);
+                    if (scriptEl) scriptEl.remove();
                 };
                 
                 const script = document.createElement('script');
@@ -88,7 +89,6 @@
             try {
                 document.getElementById('hari-tanggal-berjalan').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
                 
-                // Mengambil seluruh data secara paralel aman dengan JSONP
                 const [berita, pelayanan, galeri, faq] = await Promise.all([
                     requestJsonp('berita'),
                     requestJsonp('pelayanan'),
@@ -162,10 +162,10 @@
                     const d = new Date(p.tanggal_waktu);
                     return d.getDate() === hari.getDate() && d.getMonth() === hari.getMonth() && d.getFullYear() === hari.getFullYear();
                 });
-                if (today.length === 0) cont.innerHTML = '<p class="text-gray-400 text-center text-sm italic py-2">Tidak ada jadwal hari ini.</p>';
+                if (today.length === 0) cont.innerHTML = '<p class="text-gray-400 text-center text-sm italic py-2">Tidak ada jadwal ibadah hari ini.</p>';
                 else today.forEach(p => cont.innerHTML += `<div class="border-l-4 border-purple-600 pl-3"><p class="font-bold text-gray-950 font-heading text-purple-950">${p.nama_kegiatan}</p></div>`);
             } else {
-                cont.innerHTML = '<p class="text-gray-400 text-center text-sm italic py-2">Tidak ada jadwal hari ini.</p>';
+                cont.innerHTML = '<p class="text-gray-400 text-center text-sm italic py-2">Tidak ada jadwal ibadah hari ini.</p>';
             }
         }
 
