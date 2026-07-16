@@ -80,16 +80,20 @@
             const cont = document.getElementById('daftar-faq');
             cont.innerHTML = '';
             data.forEach((item, i) => {
+                // Gunakan nama kolom yang persis sama dengan di Google Sheets (huruf besar/kecil harus sama)
+                const pertanyaan = item.Pertanyaan; 
+                const jawaban = item.Jawaban;
+                
                 cont.innerHTML += `
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100">
                         <button onclick="toggleFAQ('faq-${i}')" class="w-full text-left p-4 flex justify-between items-center text-sm font-bold text-purple-900">
-                            ${item.pertanyaan} <span id="icon-faq-${i}">▼</span>
+                            ${pertanyaan} <span id="icon-faq-${i}">▼</span>
                         </button>
-                        <div id="faq-${i}" class="hidden p-4 pt-0 text-xs text-gray-600 border-t border-gray-50">${item.jawaban}</div>
+                        <div id="faq-${i}" class="hidden p-4 pt-0 text-xs text-gray-600 border-t border-gray-50">${jawaban}</div>
                     </div>`;
             });
         }
-
+        
         function toggleFAQ(id) {
             const el = document.getElementById(id);
             el.classList.toggle('hidden');
