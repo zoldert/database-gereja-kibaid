@@ -54,6 +54,8 @@
 
     <script>
         const API = "https://sheetdb.io/api/v1/oq2dn8eyynehu";
+        let currentSlideIdx = 0; // Variabel yang hilang sebelumnya
+
         async function initApp() {
             try {
                 const t = new Date().getTime();
@@ -90,7 +92,6 @@
             }, 10000);
         }
 
-        let currentSlideIdx = 0;
         function renderPelayanan(data) {
             const cont = document.getElementById('pelayanan-hari-ini');
             const hari = new Date();
