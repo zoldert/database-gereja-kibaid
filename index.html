@@ -12,13 +12,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        body { 
-            font-family: 'Inter', sans-serif; 
-        }
-        .font-heading { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-        }
-        /* Menggunakan Sistem Grid Bertumpuk untuk Menghindari Teks Terpotong */
+        body { font-family: 'Inter', sans-serif; }
+        .font-heading { font-family: 'Plus Jakarta Sans', sans-serif; }
         .slider-container {
             position: relative;
             width: 100%;
@@ -41,9 +36,8 @@
 </head>
 <body class="bg-gray-50 text-gray-800 tracking-tight antialiased">
 
-    <!-- HEADER (LOGO, NAMA 2 BARIS, DAN TANGGAL BERJALAN) -->
+    <!-- HEADER -->
     <header class="sticky top-0 bg-purple-700 py-5 px-4 text-center text-white shadow-md z-50 max-w-md mx-auto flex flex-col items-center gap-1">
-        <!-- Logo diperbarui menggunakan link i.ibb.co.com -->
         <img id="logo-gereja" src="https://i.ibb.co.com/TxJcbZmH/logo-gereja-kibaid.png" 
              alt="Logo KIBAID" class="w-14 h-14 rounded-full object-cover border-2 border-amber-400 mb-1 shadow-md bg-white">
         
@@ -59,23 +53,20 @@
         </div>
     </header>
 
-    <!-- MAIN LANDING PAGE CONTAINER -->
+    <!-- MAIN CONTAINER -->
     <main class="p-4 max-w-md mx-auto space-y-6 pb-12">
-        
-        <!-- LOADING INDICATOR -->
         <div id="loading" class="text-center py-6 font-semibold text-purple-900 text-sm">
-            ⏳ Memuat data jemaat...
+            ⏳ Memuat data...
         </div>
 
-        <!-- ================= 1. INFO TERKINI / BERITA ================= -->
+        <!-- INFO TERKINI -->
         <section class="space-y-3">
             <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Info Terkini</h2>
             <div id="daftar-berita" class="slider-container rounded-2xl shadow-sm border border-gray-100 bg-white min-h-[140px]">
-                <!-- Konten Berita Dinamis -->
             </div>
         </section>
 
-        <!-- ================= 2. WARTA HARI INI ================= -->
+        <!-- WARTA HARI INI -->
         <section class="space-y-4">
             <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                 <h2 class="text-xs font-bold text-purple-700 uppercase tracking-widest mb-3 font-heading">Warta Hari Ini</h2>
@@ -83,28 +74,26 @@
             </div>
         </section>
 
-        <!-- ================= 3. GALERI FOTO KEGIATAN ================= -->
+        <!-- GALERI KEGIATAN -->
         <section class="space-y-3">
             <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Galeri Kegiatan</h2>
             <div id="grid-galeri" class="grid grid-cols-2 gap-3">
-                <!-- Grid Foto Dinamis -->
             </div>
         </section>
-   </main>
+    </main>
 
-    <!-- MODAL LIGHTBOX POP-UP UNTUK PERBESAR FOTO -->
+    <!-- MODAL -->
     <div id="lightbox-modal" class="hidden fixed inset-0 bg-black/95 z-50 flex flex-col justify-center items-center p-4" onclick="closeLightbox()">
         <button class="absolute top-6 right-6 text-white text-2xl font-light bg-white/10 w-10 h-10 rounded-full flex justify-center items-center cursor-pointer">&times;</button>
         <img id="lightbox-img" src="" alt="Foto Besar" class="max-w-full max-h-[75vh] object-contain rounded-lg shadow-2xl" onclick="event.stopPropagation()">
         <p id="lightbox-caption" class="text-white text-xs font-semibold mt-4 text-center px-4 max-w-md"></p>
     </div>
 
-    <!-- FOOTER KETERANGAN -->
     <footer class="bg-gray-800 py-5 text-center text-[9px] text-gray-500 max-w-md mx-auto tracking-widest font-heading">
         &copy; 2026 GEREJA KIBAID JEMAAT AMBON KOTA.
     </footer>
 
-    <!-- LOGIKA JAVASCRIPT & GOOGLE SHEETS VIA SHEETDB -->
+    <!-- SCRIPT -->
     <script>
         const SHEETDB_API_URL = "https://sheetdb.io/api/v1/oq2dn8eyynehu"; 
 
@@ -112,18 +101,6 @@
             const d = new Date();
             const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
             document.getElementById('hari-tanggal-berjalan').innerText = d.toLocaleDateString('id-ID', options);
-        }
-
-        function calculateAge(birthDateString) {
-            if(!birthDateString) return 0;
-            const today = new Date();
-            const birthDate = new Date(birthDateString);
-            let age = today.getFullYear() - birthDate.getFullYear();
-            const m = today.getMonth() - birthDate.getMonth();
-            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
-            }
-            return age;
         }
 
         function openLightbox(url, title) {
@@ -154,152 +131,86 @@
             }
         }
 
-        function toggleSection(sectionId, textId, iconId) {
-            const target = document.getElementById(sectionId);
-            const txt = document.getElementById(textId);
-            const icon = document.getElementById(iconId);
-
-            if(target.classList.contains('hidden')) {
-                target.classList.remove('hidden');
-                txt.innerText = "Sembunyikan";
-                icon.style.transform = "rotate(180deg)";
-            } else {
-                target.classList.add('hidden');
-                txt.innerText = "Selengkapnya";
-                icon.style.transform = "rotate(0deg)";
-            }
-        }
-
         async function initApp() {
             try {
                 updateHeaderDate();
-                document.getElementById('loading').classList.remove('hidden');
-                
                 const t = new Date().getTime();
-                const [resBerita, resPelayanan, resGaleri, resMajelis, resJemaat] = await Promise.all([
+                const [resBerita, resPelayanan, resGaleri] = await Promise.all([
                     fetch(`${SHEETDB_API_URL}?sheet=berita&t=${t}`).then(r => r.json()),
                     fetch(`${SHEETDB_API_URL}?sheet=pelayanan&t=${t}`).then(r => r.json()),
-                    fetch(`${SHEETDB_API_URL}?sheet=galeri&t=${t}`).then(r => r.json()),
-                    fetch(`${SHEETDB_API_URL}?sheet=majelis&t=${t}`).then(r => r.json()),
-                    fetch(`${SHEETDB_API_URL}?sheet=jemaat&t=${t}`).then(r => r.json())
+                    fetch(`${SHEETDB_API_URL}?sheet=galeri&t=${t}`).then(r => r.json())
                 ]);
 
                 renderBerita(resBerita);
                 renderPelayanan(resPelayanan);
                 renderGaleri(resGaleri);
-                renderMajelis(resMajelis);
-                renderDemografiAndUltah(resJemaat);
-
                 document.getElementById('loading').classList.add('hidden');
             } catch (error) {
-                console.error("Gagal memuat data:", error);
-                document.getElementById('loading').innerText = "❌ Gagal memuat database.";
+                document.getElementById('loading').innerText = "❌ Gagal memuat data.";
             }
         }
 
         function renderPelayanan(data) {
             const container = document.getElementById('pelayanan-hari-ini');
             container.innerHTML = '';
-
             const hariIni = new Date();
-            const localDay = hariIni.getDate();
-            const localMonth = hariIni.getMonth();
-            const localYear = hariIni.getFullYear();
-
             let adaJadwal = false;
 
             if (Array.isArray(data) && data.length > 0) {
                 data.forEach((p, index) => {
                     if(!p.tanggal_waktu) return;
                     const dateObj = new Date(p.tanggal_waktu);
-                    
-                    if (dateObj.getDate() === localDay && 
-                        dateObj.getMonth() === localMonth && 
-                        dateObj.getFullYear() === localYear) {
-                        
+                    if (dateObj.getDate() === hariIni.getDate() && dateObj.getMonth() === hariIni.getMonth() && dateObj.getFullYear() === hariIni.getFullYear()) {
                         adaJadwal = true;
-                        const time = dateObj.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
                         const uniqueId = `warta-${index}`;
-                        
                         container.innerHTML += `
                             <div class="pb-2 space-y-3">
                                 <div class="border-l-4 border-purple-600 pl-3">
                                     <p class="font-bold text-gray-950 text-base font-heading text-purple-950 leading-snug">${p.nama_kegiatan}</p>
-                                    <p class="text-xs font-semibold text-gray-500 mt-0.5"> Jam ${time} WIT</p>
-                                    ${p.keterangan ? `<p class="text-[11px] text-purple-700 italic mt-1 font-medium">* ${p.keterangan}</p>` : ''}
+                                    <p class="text-xs font-semibold text-gray-500 mt-0.5"> Jam ${dateObj.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})} WIT</p>
                                 </div>
-                                
-                                <button onclick="toggleWarta('${uniqueId}')" class="w-full flex items-center justify-between py-2 px-3 bg-purple-50 hover:bg-purple-100/80 rounded-xl text-purple-700 font-bold text-xs font-heading transition cursor-pointer select-none">
+                                <button onclick="toggleWarta('${uniqueId}')" class="w-full flex items-center justify-between py-2 px-3 bg-purple-50 rounded-xl text-purple-700 font-bold text-xs font-heading">
                                     <span id="btn-text-${uniqueId}">Selengkapnya</span>
                                     <svg id="btn-icon-${uniqueId}" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </button>
-
-                                <div id="detail-${uniqueId}" class="hidden bg-gray-50 rounded-xl border border-gray-100 overflow-hidden divide-y divide-gray-200/60 text-xs transition-all duration-300">
-                                    <div class="p-3 bg-white"><span class="font-bold text-gray-400 block text-[10px] uppercase tracking-wider font-heading mb-0.5">Khotbah</span><span class="text-gray-900 font-semibold text-sm">${p.pengkhotbah || '-'}</span></div>
-                                    <div class="p-3 bg-white"><span class="font-bold text-gray-400 block text-[10px] uppercase tracking-wider font-heading mb-0.5">Liturgis/Pelayan</span><span class="text-gray-900 font-semibold text-sm">${p.pelayan_liturgi || '-'}</span></div>
-                                    <div class="p-3 bg-white"><span class="font-bold text-gray-400 block text-[10px] uppercase tracking-wider font-heading mb-0.5">Pemusik</span><span class="text-gray-900 font-semibold text-sm">${p.pemusik || '-'}</span></div>
-                                    <div class="p-3 bg-white"><span class="font-bold text-gray-400 block text-[10px] uppercase tracking-wider font-heading mb-0.5">Pendoa Syafaat</span><span class="text-gray-900 font-semibold text-sm">${p.pendoa_syafaat || '-'}</span></div>
-                                    <div class="p-3 bg-white"><span class="font-bold text-gray-400 block text-[10px] uppercase tracking-wider font-heading mb-0.5">Kolektan</span><span class="text-gray-900 font-semibold text-sm">${p.kolektan || '-'}</span></div>
-                                    <div class="p-3 bg-white"><span class="font-bold text-gray-400 block text-[10px] uppercase tracking-wider font-heading mb-0.5">Operator LCD</span><span class="text-gray-900 font-semibold text-sm">${p.operator_lcd || '-'}</span></div>
-                                    <div class="p-3 bg-white"><span class="font-bold text-gray-400 block text-[10px] uppercase tracking-wider font-heading mb-0.5">Doa Persembahan</span><span class="text-gray-900 font-semibold text-sm">${p.doa_persembahan || '-'}</span></div>
-                                    <div class="p-3 bg-white"><span class="font-bold text-gray-400 block text-[10px] uppercase tracking-wider font-heading mb-0.5">Pembaca Warta</span><span class="text-gray-900 font-semibold text-sm">${p.pembaca_warta || '-'}</span></div>
-                                    <div class="p-3 bg-white"><span class="font-bold text-gray-400 block text-[10px] uppercase tracking-wider font-heading mb-0.5">Penyambut Jemaat</span><span class="text-gray-900 font-semibold text-sm">${p.penyambut_jemaat || '-'}</span></div>
+                                <div id="detail-${uniqueId}" class="hidden bg-gray-50 rounded-xl border border-gray-100 p-3 text-xs space-y-2">
+                                    <div><span class="font-bold text-gray-400 block text-[10px] uppercase">Khotbah</span>${p.pengkhotbah || '-'}</div>
+                                    <div><span class="font-bold text-gray-400 block text-[10px] uppercase">Pelayan Liturgi</span>${p.pelayan_liturgi || '-'}</div>
                                 </div>
                             </div>
                         `;
                     }
                 });
             }
-
-            if (!adaJadwal) {
-                container.innerHTML = `<div class="text-gray-400 text-center py-2 text-sm italic">Tidak ada jadwal pelayanan atau warta untuk hari ini.</div>`;
-            }
+            if (!adaJadwal) container.innerHTML = `<div class="text-gray-400 text-center py-2 text-sm italic">Tidak ada jadwal pelayanan hari ini.</div>`;
         }
 
         let currentSlideIdx = 0;
-        let slideIntervalId = null;
-
         function runInfoSlider(totalSlides) {
             if (totalSlides <= 1) return;
-            if (slideIntervalId) clearInterval(slideIntervalId);
-            
-            slideIntervalId = setInterval(() => {
-                const prevSlide = document.getElementById('slide-' + currentSlideIdx);
-                if(prevSlide) prevSlide.classList.remove('active');
-                
+            setInterval(() => {
+                const slides = document.querySelectorAll('.slide-item');
+                slides[currentSlideIdx].classList.remove('active');
                 currentSlideIdx = (currentSlideIdx + 1) % totalSlides;
-                
-                const nextSlide = document.getElementById('slide-' + currentSlideIdx);
-                if(nextSlide) nextSlide.classList.add('active');
+                slides[currentSlideIdx].classList.add('active');
             }, 10000);
         }
 
         function renderBerita(data) {
             const container = document.getElementById('daftar-berita');
             container.innerHTML = '';
-            
             const hariIni = new Date();
             let validBeritaCount = 0;
 
-            if (Array.isArray(data) && data.length > 0) {
-                const reversedData = [...data].reverse();
-
-                reversedData.forEach((b) => {
-                    const statusAktif = String(b.aktif || "").trim().toUpperCase();
-
-                    if (statusAktif === "TRUE") {
+            if (Array.isArray(data)) {
+                [...data].reverse().forEach((b) => {
+                    if (String(b.aktif || "").trim().toUpperCase() === "TRUE") {
                         if (b.tanggal_publikasi) {
                             const tglPublikasi = new Date(b.tanggal_publikasi);
-                            const selisihWaktu = hariIni.getTime() - tglPublikasi.getTime();
-                            const selisihHari = Math.floor(selisihWaktu / (1000 * 60 * 60 * 24));
-
-                            if (selisihHari > 7) return; 
+                            if ((hariIni - tglPublikasi) / (1000 * 60 * 60 * 24) > 7) return; 
                         }
-
-                        const activeClass = validBeritaCount === 0 ? 'active' : '';
-
                         container.innerHTML += `
-                            <div id="slide-${validBeritaCount}" class="slide-item p-5 min-h-[140px] ${activeClass}">
+                            <div id="slide-${validBeritaCount}" class="slide-item p-5 min-h-[140px] ${validBeritaCount === 0 ? 'active' : ''}">
                                 <h3 class="font-bold text-gray-950 text-base font-heading">${b.judul}</h3>
                                 <span class="text-[10px] text-gray-400 block mb-2 font-medium">📅 ${b.tanggal_publikasi || ''}</span>
                                 <p class="text-sm text-gray-600 leading-relaxed font-normal">${b.isi_konten}</p>
@@ -309,132 +220,24 @@
                     }
                 });
             }
-
-            if (validBeritaCount === 0) {
-                container.innerHTML = '<div class="p-5 text-gray-400 text-sm italic text-center w-full">Belum ada informasi terbaru minggu ini.</div>';
-            } else {
-                currentSlideIdx = 0;
-                runInfoSlider(validBeritaCount);
-            }
-        }
-
-        function renderDemografiAndUltah(data) {
-            if (!Array.isArray(data) || data.length === 0) return;
-
-            let jiwa = data.length;
-            let laki = 0, perempuan = 0;
-            let balita = 0, pratama = 0, madya = 0, taruna = 0, remaja = 0;
-            let pemuda = 0, dewasa = 0;
-            
-            let keluargaUnik = new Set();
-            let statusKeluargaMap = new Map(); 
-            
-            let jemaatUltahHariIni = [];
-            const today = new Date();
-            const todayMonth = today.getMonth();
-            const todayDate = today.getDate();
-
-            data.forEach(j => {
-                if (j.jenis_kelamin === 'L') laki++;
-                if (j.jenis_kelamin === 'P') perempuan++;
-                
-                if (j.id_keluarga) {
-                    const idFam = parseInt(j.id_keluarga);
-                    keluargaUnik.add(idFam);
-                    if (j.status_keanggotaan === 'Tetap' || !statusKeluargaMap.has(idFam)) {
-                        statusKeluargaMap.set(idFam, j.status_keanggotaan);
-                    }
-                }
-
-                const umur = calculateAge(j.tanggal_lahir);
-                
-                if (umur <= 3) balita++;
-                else if (umur >= 4 && umur <= 6) pratama++;
-                else if (umur >= 7 && umur <= 9) madya++;
-                else if (umur >= 10 && umur <= 12) taruna++;
-                else if (umur >= 13 && umur <= 16) remaja++;
-                else if (umur >= 17 && umur <= 34) pemuda++;
-                else if (umur >= 35) dewasa++;
-
-                if (j.tanggal_lahir) {
-                    const birthDate = new Date(j.tanggal_lahir);
-                    if (birthDate.getMonth() === todayMonth && birthDate.getDate() === todayDate) {
-                        jemaatUltahHariIni.push(`${j.nama_lengkap} (${umur + 1} Thn)`);
-                    }
-                }
-            });
-
-            let keluargaTetap = 0;
-            let keluargaSimpatisan = 0;
-            statusKeluargaMap.forEach((status) => {
-                if (status === 'Tetap') keluargaTetap++;
-                else if (status === 'Simpatisan') keluargaSimpatisan++;
-            });
-
-            const boxUltah = document.getElementById('box-ulang-tahun');
-            const listUltah = document.getElementById('list-jemaat-ultah');
-            if (jemaatUltahHariIni.length > 0) {
-                boxUltah.classList.remove('hidden');
-                listUltah.innerHTML = jemaatUltahHariIni.join(', ');
-            } else {
-                boxUltah.classList.add('hidden');
-            }
-
-            document.getElementById('stat-keluarga').innerText = keluargaUnik.size;
-            document.getElementById('stat-jiwa').innerText = jiwa;
-            document.getElementById('stat-laki').innerText = laki;
-            document.getElementById('stat-perempuan').innerText = perempuan;
-            
-            document.getElementById('stat-balita').innerText = balita;
-            document.getElementById('stat-pratama').innerText = pratama;
-            document.getElementById('stat-madya').innerText = madya;
-            document.getElementById('stat-taruna').innerText = taruna;
-            document.getElementById('stat-remaja').innerText = remaja;
-
-            document.getElementById('stat-pemuda').innerText = pemuda;
-            document.getElementById('stat-dewasa').innerText = dewasa;
-            
-            document.getElementById('stat-keluarga-tetap').innerText = keluargaTetap;
-            document.getElementById('stat-keluarga-simpatisan').innerText = keluargaSimpatisan;
-        }
-
-        function renderMajelis(data) {
-            const container = document.getElementById('daftar-majelis');
-            container.innerHTML = '';
-
-            if (Array.isArray(data) && data.length > 0) {
-                data.sort((a, b) => parseInt(a.urutan || 99) - parseInt(b.urutan || 99));
-                data.forEach(m => {
-                    container.innerHTML += `
-                        <div class="bg-white px-4 py-3 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center">
-                            <span class="font-semibold text-gray-900 text-sm">${m.nama_lengkap}</span>
-                            <span class="text-xs text-purple-700 bg-purple-50 font-bold px-2 py-0.5 rounded-full border border-purple-100 font-heading">${m.jabatan}</span>
-                        </div>
-                    `;
-                });
-            } else {
-                container.innerHTML = '<p class="text-gray-400 text-sm italic text-center py-2">Data pengurus majelis belum dimasukkan.</p>';
-            }
+            if (validBeritaCount > 0) runInfoSlider(validBeritaCount);
+            else container.innerHTML = '<div class="p-5 text-gray-400 text-sm italic text-center">Belum ada informasi terbaru.</div>';
         }
 
         function renderGaleri(data) {
             const container = document.getElementById('grid-galeri');
             container.innerHTML = '';
-
-            if (Array.isArray(data) && data.length > 0) {
+            if (Array.isArray(data)) {
                 data.reverse().forEach(g => {
                     container.innerHTML += `
                         <div class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer" onclick="openLightbox('${g.url_foto}', '${g.judul_kegiatan}')">
-                            <img src="${g.url_foto}" alt="${g.judul_kegiatan}" class="w-full h-28 object-cover hover:opacity-90 transition">
+                            <img src="${g.url_foto}" class="w-full h-28 object-cover">
                             <div class="p-2">
-                                <p class="text-xs font-bold text-gray-950 truncate font-heading">${g.judul_kegiatan}</p>
-                                <span class="text-[9px] text-gray-400 block mt-0.5 font-medium">📅 ${g.tanggal_kegiatan || ''}</span>
+                                <p class="text-xs font-bold text-gray-950 truncate">${g.judul_kegiatan}</p>
                             </div>
                         </div>
                     `;
                 });
-            } else {
-                container.innerHTML = '<p class="text-gray-400 text-sm italic text-center py-4 col-span-2">Belum ada foto kegiatan.</p>';
             }
         }
 
