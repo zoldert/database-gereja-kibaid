@@ -43,9 +43,9 @@
 
     <!-- HEADER (LOGO, NAMA 2 BARIS, DAN TANGGAL BERJALAN) -->
     <header class="sticky top-0 bg-purple-700 py-5 px-4 text-center text-white shadow-md z-50 max-w-md mx-auto flex flex-col items-center gap-1">
-        <!-- Perbaikan tautan nama file menggunakan %20 pengganti spasi -->
-        <img id="logo-gereja" src="logo%20gereja%20kibaid.png" 
-             alt="Logo KIBAID" class="w-14 h-14 rounded-full object-cover border-2 border-amber-400 mb-1 shadow-md">
+        <!-- Tautan gambar diubah langsung menggunakan link berkas mentah (raw) GitHub Anda -->
+        <img id="logo-gereja" src="https://raw.githubusercontent.com/zoldert/database-gereja-kibaid/main/logo%20gereja%20kibaid.png" 
+             alt="Logo KIBAID" class="w-14 h-14 rounded-full object-cover border-2 border-amber-400 mb-1 shadow-md bg-white">
         
         <h1 class="text-lg font-extrabold font-heading tracking-wider uppercase leading-tight text-amber-300">
             GEREJA KIBAID
@@ -228,7 +228,6 @@
             document.body.classList.remove('overflow-hidden');
         }
 
-        // FUNGSI TOGGLE KHUSUS UNTUK DETAIL WARTA HARI INI
         function toggleWarta(idKegiatan) {
             const boxDetail = document.getElementById(`detail-${idKegiatan}`);
             const btnText = document.getElementById(`btn-text-${idKegiatan}`);
@@ -245,7 +244,6 @@
             }
         }
 
-        // FUNGSI TOGGLE GLOBAL UNTUK KOTAK DEMOGRAFI JEMAAT
         function toggleSection(sectionId, textId, iconId) {
             const target = document.getElementById(sectionId);
             const txt = document.getElementById(textId);
@@ -356,12 +354,12 @@
             if (slideIntervalId) clearInterval(slideIntervalId);
             
             slideIntervalId = setInterval(() => {
-                const prevSlide = document.getElementById(`slide-${currentSlideIdx}`);
+                const prevSlide = document.getElementById('slide-' + currentSlideIdx);
                 if(prevSlide) prevSlide.classList.remove('active');
                 
                 currentSlideIdx = (currentSlideIdx + 1) % totalSlides;
                 
-                const nextSlide = document.getElementById(`slide-${currentSlideIdx}`);
+                const nextSlide = document.getElementById('slide-' + currentSlideIdx);
                 if(nextSlide) nextSlide.classList.add('active');
             }, 10000);
         }
