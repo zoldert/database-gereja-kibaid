@@ -47,13 +47,12 @@
             ⏳ Memuat data jemaat...
         </div>
 
-        <!-- ================= 1. INFO TERKINI / BERITA (DENGAN SLIDER AUTOMATIS) ================= -->
+        <!-- ================= 1. INFO TERKINI / BERITA ================= -->
         <section class="space-y-3">
             <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Info Terkini</h2>
-            <!-- Wadah Slider Utama -->
             <div class="relative overflow-hidden rounded-2xl shadow-sm border border-gray-100 bg-white">
                 <div id="daftar-berita" class="relative min-h-[140px]">
-                    <!-- Konten Berita Dinamis Masuk Sini -->
+                    <!-- Konten Berita Dinamis -->
                 </div>
             </div>
         </section>
@@ -328,25 +327,22 @@
             }
         }
 
-        // VARIABEL GLOBAL UNTUK MANAJEMEN SLIDER INFO TERKINI
         let currentSlideIdx = 0;
         let slideIntervalId = null;
 
         function runInfoSlider(totalSlides) {
-            if (totalSlides <= 1) return; // Jika cuma 1 info, tidak perlu digeser otomatis
-            
+            if (totalSlides <= 1) return;
             if (slideIntervalId) clearInterval(slideIntervalId);
             
             slideIntervalId = setInterval(() => {
                 const currentSlide = document.getElementById(`slide-${currentSlideIdx}`);
                 if (currentSlide) currentSlide.classList.add('hidden');
                 
-                // Pindah ke indeks slide berikutnya, berputar kembali ke 0 jika mentok
                 currentSlideIdx = (currentSlideIdx + 1) % totalSlides;
                 
                 const nextSlide = document.getElementById(`slide-${currentSlideIdx}`);
                 if (nextSlide) nextSlide.classList.remove('hidden');
-            }, 5000); // Eksekusi pergeseran setiap 5000 milidetik (5 detik)
+            }, 5000);
         }
 
         function renderBerita(data) {
@@ -357,23 +353,20 @@
             let validBeritaCount = 0;
 
             if (Array.isArray(data) && data.length > 0) {
-                // Balik urutan agar berita yang paling baru berada di antrean awal
                 const reversedData = [...data].reverse();
 
                 reversedData.forEach((b) => {
                     if (b.aktif === "TRUE" || b.aktif === true || b.aktif === "true") {
                         
-                        // LOGIKA FILTER WAKTU: HANYA TAMPILKAN JIKA USIA INPUT MASIH DI BAWAH / SAMA DENGAN 7 HARI
                         if (b.tanggal_publikasi) {
                             const tglPublikasi = new Date(b.tanggal_publikasi);
                             const selisihWaktu = hariIni.getTime() - tglPublikasi.getTime();
-                            const selisihHari = Math.floor(selisihWaktu / (1000 * 3000 * 24)); // Rumus milidetik ke hari
+                            const selisihHari = Math.floor(selisihWaktu / (1000 * 60 * 60 * 24));
 
-                            if (selisihHari > 7) return; // Skip/Abaikan berita yang sudah berumur lebih dari seminggu
+                            if (selisihHari > 7) return; 
                         }
 
-                        // Set status tampil (Slide pertama langsung dibuka, slide berikutnya disembunyikan/hidden dulu)
-                        constisHidden = validBeritaCount === 0 ? '' : 'hidden';
+                        const isHidden = validBeritaCount === 0 ? '' : 'hidden';
 
                         container.innerHTML += `
                             <div id="slide-${validBeritaCount}" class="p-5 transition-all duration-500 min-h-[140px] flex flex-col justify-between ${isHidden}">
@@ -392,7 +385,6 @@
             if (validBeritaCount === 0) {
                 container.innerHTML = '<div class="p-5 text-gray-400 text-sm italic text-center">Belum ada informasi terbaru minggu ini.</div>';
             } else {
-                // Aktifkan putaran slider otomatis jika ada lebih dari 1 info valid
                 currentSlideIdx = 0;
                 runInfoSlider(validBeritaCount);
             }
