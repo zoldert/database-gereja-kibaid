@@ -60,7 +60,6 @@
         </main>
     </div>
 
-    <!-- FOOTER COPYRIGHT BARU -->
     <footer class="w-full bg-purple-900 py-4 px-4 text-center text-white/70 text-[10px] font-medium max-w-md mx-auto rounded-t-2xl shadow-inner mt-6">
         <p>&copy; 2026 Gereja KIBAID Jemaat Ambon Kota. All Rights Reserved.</p>
         <p class="text-white/40 mt-0.5">Dikelola secara internal untuk keperluan warta jemaat.</p>
@@ -72,12 +71,19 @@
     </div>
 
     <script>
-        const URL_BERITA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1711430912&single=true&output=tsv";
-        const URL_PELAYANAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=0&single=true&output=tsv";
-        const URL_GALERI = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1957154134&single=true&output=tsv";
-        const URL_FAQ = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=676534391&single=true&output=tsv";
+        const URL_BERITA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1711430912&single=true&output=tsv";[cite: 2]
+        const URL_PELAYANAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=0&single=true&output=tsv";[cite: 2]
+        const URL_GALERI = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1957154134&single=true&output=tsv";[cite: 2]
+        const URL_FAQ = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=676534391&single=true&output=tsv";[cite: 2]
 
         let currentSlideIdx = 0;
+
+        function formatTanggalIndo(dateString) {
+            if (!dateString) return "";
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return dateString;
+            return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
 
         function cleanQuotes(str) {
             if (!str) return "";
@@ -204,10 +210,19 @@
 
         function renderGaleri(data) {
             const cont = document.getElementById('grid-galeri');
+            cont.innerHTML = '';
             if (Array.isArray(data)) {
                 const validGaleri = data.filter(g => g.url_foto && g.judul_kegiatan);
                 [...validGaleri].reverse().slice(0, 4).forEach(g => {
-                    cont.innerHTML += `<div class="bg-white rounded-xl shadow-sm border border-gray-100 cursor-pointer overflow-hidden" onclick="openLightbox('${g.url_foto}')"><img src="${g.url_foto}" class="w-full h-28 object-cover"><div class="p-2"><p class="text-xs font-bold truncate font-heading text-gray-950">${g.judul_kegiatan}</p></div></div>`;
+                    const tglRapi = formatTanggalIndo(g.tanggal_kegiatan);
+                    cont.innerHTML += `
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 cursor-pointer overflow-hidden" onclick="openLightbox('${g.url_foto}')">
+                            <img src="${g.url_foto}" class="w-full h-28 object-cover">
+                            <div class="p-2">
+                                <p class="text-xs font-bold truncate font-heading text-gray-950">${g.judul_kegiatan}</p>
+                                <p class="text-[9px] text-gray-400 mt-0.5">📅 ${tglRapi}</p>
+                            </div>
+                        </div>`;
                 });
             }
         }
