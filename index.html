@@ -55,11 +55,10 @@
     </div>
 
     <script>
-        // Link CSV dari Google Sheets Anda sudah dimasukkan langsung di bawah ini
-        const URL_BERITA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1711430912&single=true&output=csv";
-        const URL_PELAYANAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=0&single=true&output=csv";
-        const URL_GALERI = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1957154134&single=true&output=csv";
-        const URL_FAQ = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=676534391&single=true&output=csv";
+        const URL_BERITA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1711430912&single=true&output=csv";[cite: 1]
+        const URL_PELAYANAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=0&single=true&output=csv";[cite: 1]
+        const URL_GALERI = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1957154134&single=true&output=csv";[cite: 1]
+        const URL_FAQ = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=676534391&single=true&output=csv";[cite: 1]
 
         let currentSlideIdx = 0;
 
@@ -145,23 +144,26 @@
         
         function renderBerita(data) {
             const cont = document.getElementById('daftar-berita');
+            cont.innerHTML = '';
             if (Array.isArray(data)) {
                 const valid = data.filter(b => b.aktif && b.aktif.toString().toUpperCase().trim() === "TRUE");
+                const reversedValid = [...valid].reverse();
                 
-                valid.reverse().forEach((b, i) => {
+                reversedValid.forEach((b, i) => {
                     const tglRapi = formatTanggalIndo(b.tanggal_publikasi);
                     cont.innerHTML += `<div id="slide-${i}" class="slide-item p-5 ${i===0 ? 'active':''}"><h3 class="font-bold text-gray-950 text-base font-heading">${b.judul}</h3><span class="text-[10px] text-gray-400 block mb-2">📅 ${tglRapi}</span><p class="text-sm text-gray-600">${b.isi_konten}</p></div>`;
                 });
                 
-                if (valid.length > 1) {
+                if (reversedValid.length > 1) {
+                    currentSlideIdx = 0;
                     setInterval(() => {
                         const slides = document.querySelectorAll('.slide-item');
                         if(slides.length > 0) {
                             slides[currentSlideIdx].classList.remove('active');
-                            currentSlideIdx = (currentSlideIdx + 1) % valid.length;
+                            currentSlideIdx = (currentSlideIdx + 1) % reversedValid.length;
                             slides[currentSlideIdx].classList.add('active');
                         }
-                    }, 10000);
+                    }, 7000); // Durasi disesuaikan menjadi 7 detik
                 }
             }
         }
@@ -185,7 +187,7 @@
         function renderGaleri(data) {
             const cont = document.getElementById('grid-galeri');
             if (Array.isArray(data)) {
-                data.reverse().slice(0, 4).forEach(g => {
+                [...data].reverse().slice(0, 4).forEach(g => {
                     const tglRapi = formatTanggalIndo(g.tanggal_kegiatan);
                     cont.innerHTML += `<div class="bg-white rounded-xl shadow-sm border border-gray-100 cursor-pointer overflow-hidden" onclick="openLightbox('${g.url_foto}')"><img src="${g.url_foto}" class="w-full h-28 object-cover"><div class="p-2"><p class="text-xs font-bold truncate font-heading text-gray-950">${g.judul_kegiatan}</p><p class="text-[9px] text-gray-400">📅 ${tglRapi}</p></div></div>`;
                 });
