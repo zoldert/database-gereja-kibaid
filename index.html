@@ -55,15 +55,14 @@
     </div>
 
     <script>
-        // Ganti teks di bawah ini dengan URL Aplikasi Web Anda jika belum diganti sebelumnya
-        const API = "https://script.google.com/macros/s/AKfycbxc4dDJmnSU48Ij8sBTb_Vsrhrz2y2jeUJHba34IQLx9M4mtV1mk7jqBpPHPDqYIWzGjQ/exec";
+        // Tautan API sudah diperbaiki dengan menghapus '/exec' di bagian paling ujungnya
+        const API = "https://script.google.com/macros/s/AKfycbxc4dDJmnSU48Ij8sBTb_Vsrhrz2y2jeUJHba34IQLx9M4mtV1mk7jqBpPHPDqYIWzGjQ";
         let currentSlideIdx = 0;
 
-        // Fungsi pembantu untuk merapikan format tanggal mentah Google
         function formatTanggalIndo(dateString) {
             if (!dateString) return "";
             const date = new Date(dateString);
-            if (isNaN(date.getTime())) return dateString; // kembalikan teks asli jika bukan tanggal resmi
+            if (isNaN(date.getTime())) return dateString;
             return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
         }
 
@@ -84,21 +83,27 @@
                 renderFAQ(faq);
                 
                 document.getElementById('loading').classList.add('hidden');
-            } catch (e) { document.getElementById('loading').innerText = "❌ Gagal memuat data."; console.error(e); }
+            } catch (e) { 
+                document.getElementById('loading').innerText = "❌ Gagal memuat data."; 
+                console.error(e); 
+            }
         }
 
         function renderFAQ(data) {
             const cont = document.getElementById('daftar-faq');
             cont.innerHTML = '';
-            data.forEach((item, i) => {
-                cont.innerHTML += `
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-                        <button onclick="toggleFAQ('faq-${i}')" class="w-full text-left p-4 flex justify-between items-center text-sm font-bold text-purple-900">
-                            ${item.Pertanyaan} <span id="icon-faq-${i}">▼</span>
-                        </button>
-                        <div id="faq-${i}" class="hidden p-4 pt-0 text-xs text-gray-600 border-t border-gray-50">${item.Jawaban}</div>
-                    </div>`;
-            });
+            if (Array.isArray(data)) {
+                data.forEach((item, i) => {
+                    if(!item.Pertanyaan) return;
+                    cont.innerHTML += `
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                            <button onclick="toggleFAQ('faq-${i}')" class="w-full text-left p-4 flex justify-between items-center text-sm font-bold text-purple-900">
+                                ${item.Pertanyaan} <span id="icon-faq-${i}">▼</span>
+                            </button>
+                            <div id="faq-${i}" class="hidden p-4 pt-0 text-xs text-gray-600 border-t border-gray-50">${item.Jawaban || ''}</div>
+                        </div>`;
+                });
+            }
         }
 
         function toggleFAQ(id) {
@@ -112,39 +117,47 @@
         
         function renderBerita(data) {
             const cont = document.getElementById('daftar-berita');
-            const valid = data.filter(b => String(b.aktif).toUpperCase() === "TRUE");
-            valid.reverse().forEach((b, i) => {
-                const tglRapi = formatTanggalIndo(b.tanggal_publikasi);
-                cont.innerHTML += `<div id="slide-${i}" class="slide-item p-5 ${i===0 ? 'active':''}"><h3 class="font-bold text-gray-950 text-base">${b.judul}</h3><span class="text-[10px] text-gray-400 block mb-2">📅 ${tglRapi}</span><p class="text-sm text-gray-600">${b.isi_konten}</p></div>`;
-            });
-            if (valid.length > 1) setInterval(() => {
-                const slides = document.querySelectorAll('.slide-item');
-                if(slides.length > 0) {
-                    slides[currentSlideIdx].classList.remove('active');
-                    currentSlideIdx = (currentSlideIdx + 1) % valid.length;
-                    slides[currentSlideIdx].classList.add('active');
-                }
-            }, 10000);
+            if (Array.isArray(data)) {
+                const valid = data.filter(b => String(b.aktif).toUpperCase() === "TRUE");
+                valid.reverse().forEach((b, i) => {
+                    const tglRapi = formatTanggalIndo(b.tanggal_publikasi);
+                    cont.innerHTML += `<div id="slide-${i}" class="slide-item p-5 ${i===0 ? 'active':''}"><h3 class="font-bold text-gray-950 text-base">${b.judul}</h3><span class="text-[10px] text-gray-400 block mb-2">📅 ${tglRapi}</span><p class="text-sm text-gray-600">${b.isi_konten}</p></div>`;
+                });
+                if (valid.length > 1) setInterval(() => {
+                    const slides = document.querySelectorAll('.slide-item');
+                    if(slides.length > 0) {
+                        slides[currentSlideIdx].classList.remove('active');
+                        currentSlideIdx = (currentSlideIdx + 1) % valid.length;
+                        slides[currentSlideIdx].classList.add('active');
+                    }
+                }, 10000);
+            }
         }
 
         function renderPelayanan(data) {
             const cont = document.getElementById('pelayanan-hari-ini');
-            const hari = new Date();
-            const today = data.filter(p => {
-                if(!p.tanggal_waktu) return false;
-                const d = new Date(p.tanggal_waktu);
-                return d.getDate() === hari.getDate() && d.getMonth() === hari.getMonth() && d.getFullYear() === hari.getFullYear();
-            });
-            if (today.length === 0) cont.innerHTML = '<p class="text-gray-400 text-center text-sm">Tidak ada jadwal hari ini.</p>';
-            else today.forEach(p => cont.innerHTML += `<div class="border-l-4 border-purple-600 pl-3"><p class="font-bold text-gray-950">${p.nama_kegiatan}</p></div>`);
+            if (Array.isArray(data)) {
+                const hari = new Date();
+                const today = data.filter(p => {
+                    if(!p.tanggal_waktu) return false;
+                    const d = new Date(p.tanggal_waktu);
+                    return d.getDate() === hari.getDate() && d.getMonth() === hari.getMonth() && d.getFullYear() === hari.getFullYear();
+                });
+                if (today.length === 0) cont.innerHTML = '<p class="text-gray-400 text-center text-sm">Tidak ada jadwal hari ini.</p>';
+                else today.forEach(p => cont.innerHTML += `<div class="border-l-4 border-purple-600 pl-3"><p class="font-bold text-gray-950">${p.nama_kegiatan}</p></div>`);
+            } else {
+                cont.innerHTML = '<p class="text-gray-400 text-center text-sm">Tidak ada jadwal hari ini.</p>';
+            }
         }
 
         function renderGaleri(data) {
             const cont = document.getElementById('grid-galeri');
-            data.reverse().slice(0, 4).forEach(g => {
-                const tglRapi = formatTanggalIndo(g.tanggal_kegiatan);
-                cont.innerHTML += `<div class="bg-white rounded-xl shadow-sm border border-gray-100 cursor-pointer overflow-hidden" onclick="openLightbox('${g.url_foto}')"><img src="${g.url_foto}" class="w-full h-28 object-cover"><div class="p-2"><p class="text-xs font-bold truncate">${g.judul_kegiatan}</p><p class="text-[9px] text-gray-400">📅 ${tglRapi}</p></div></div>`;
-            });
+            if (Array.isArray(data)) {
+                data.reverse().slice(0, 4).forEach(g => {
+                    const tglRapi = formatTanggalIndo(g.tanggal_kegiatan);
+                    cont.innerHTML += `<div class="bg-white rounded-xl shadow-sm border border-gray-100 cursor-pointer overflow-hidden" onclick="openLightbox('${g.url_foto}')"><img src="${g.url_foto}" class="w-full h-28 object-cover"><div class="p-2"><p class="text-xs font-bold truncate">${g.judul_kegiatan}</p><p class="text-[9px] text-gray-400">📅 ${tglRapi}</p></div></div>`;
+                });
+            }
         }
         window.onload = initApp;
     </script>
