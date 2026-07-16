@@ -18,7 +18,12 @@
         .font-heading { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
         }
-        /* Style Tambahan untuk Efek Rel Geser Halus */
+        /* Perbaikan Sistem Trek Slider Agar Teks Tidak Terpotong */
+        .slider-container {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
         .slider-track {
             display: flex;
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -27,6 +32,10 @@
         .slide-item {
             flex: 0 0 100%;
             width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            white-space: normal;
+            word-break: break-word;
         }
     </style>
 </head>
@@ -57,13 +66,12 @@
             ⏳ Memuat data jemaat...
         </div>
 
-        <!-- ================= 1. INFO TERKINI / BERITA (DENGAN SLIDER ANISMASI GESER HORIZONTAL) ================= -->
+        <!-- ================= 1. INFO TERKINI / BERITA ================= -->
         <section class="space-y-3">
             <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Info Terkini</h2>
-            <div class="relative overflow-hidden rounded-2xl shadow-sm border border-gray-100 bg-white">
-                <!-- Rel Pembungkus Slider -->
+            <div class="slider-container rounded-2xl shadow-sm border border-gray-100 bg-white">
                 <div id="daftar-berita" class="slider-track">
-                    <!-- Konten Berita Dinamis Masuk Sini -->
+                    <!-- Konten Berita Dinamis -->
                 </div>
             </div>
         </section>
@@ -338,7 +346,6 @@
             }
         }
 
-        // LOGIKA DENGAN TRANSFORM TRANSLATE UNTUK ANIMASI SLIDE HORIZONTAL
         let currentSlideIdx = 0;
         let slideIntervalId = null;
 
@@ -348,11 +355,11 @@
             
             const track = document.getElementById('daftar-berita');
             
+            // PERUBAHAN DURASI: Bergeser otomatis setiap 10000ms (10 Detik)
             slideIntervalId = setInterval(() => {
                 currentSlideIdx = (currentSlideIdx + 1) % totalSlides;
-                // Menggeser rel trek trek kontainer ke kiri berdasarkan indeks slide saat ini
                 track.style.transform = `translateX(-${currentSlideIdx * 100}%)`;
-            }, 5000);
+            }, 10000);
         }
 
         function renderBerita(data) {
@@ -376,13 +383,12 @@
                             if (selisihHari > 7) return; 
                         }
 
-                        // Menyusun berita berjajar menyamping di dalam kelas slide-item
                         container.innerHTML += `
                             <div class="slide-item p-5 min-h-[140px] flex flex-col justify-between">
-                                <div>
-                                    <h3 class="font-bold text-gray-950 text-base font-heading">${b.judul}</h3>
+                                <div class="w-full">
+                                    <h3 class="font-bold text-gray-950 text-base font-heading break-words whitespace-normal">${b.judul}</h3>
                                     <span class="text-[10px] text-gray-400 block mb-2 font-medium">📅 ${b.tanggal_publikasi || ''}</span>
-                                    <p class="text-sm text-gray-600 leading-relaxed font-normal">${b.isi_konten}</p>
+                                    <p class="text-sm text-gray-600 leading-relaxed font-normal break-words whitespace-normal">${b.isi_konten}</p>
                                 </div>
                             </div>
                         `;
@@ -395,7 +401,6 @@
                 container.innerHTML = '<div class="slide-item p-5 text-gray-400 text-sm italic text-center w-full">Belum ada informasi terbaru minggu ini.</div>';
             } else {
                 currentSlideIdx = 0;
-                // Mengunci lebar rel pembungkus sesuai dengan kelipatan total berita yang valid
                 document.getElementById('daftar-berita').style.width = `${validBeritaCount * 100}%`;
                 runInfoSlider(validBeritaCount);
             }
