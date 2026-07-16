@@ -33,7 +33,7 @@
             <div id="hari-tanggal-berjalan" class="text-[10px] bg-purple-800/50 px-3 py-0.5 rounded-full mt-1">Memuat...</div>
         </header>
 
-        <!-- Teks Berjalan Ulang Tahun (Antara Header dan Info Terkini) -->
+        <!-- Teks Berjalan Ulang Tahun -->
         <div id="wrapper-ultah" class="hidden w-full max-w-md mx-auto bg-amber-100 border-b border-amber-200 py-2 px-4 text-xs font-semibold text-amber-900 flex items-center shadow-sm">
             <span class="flex-shrink-0 bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded-full mr-2 font-bold animate-pulse">🎉 HUT</span>
             <marquee id="teks-berjalan-ultah" scrollamount="4" behavior="scroll" direction="left" class="w-full">Memuat data ulang tahun...</marquee>
@@ -81,8 +81,8 @@
         const URL_PELAYANAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=0&single=true&output=tsv";
         const URL_GALERI = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1957154134&single=true&output=tsv";
         const URL_FAQ = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=676534391&single=true&output=tsv";
-        // Menambahkan link data jemaat otomatis dari spreadsheet Anda
-        const URL_JEMAAT = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pubhtml?gid=1473487241&single=true";
+        // Tautan jemaat yang disesuaikan ke format tsv agar dapat diparse
+        const URL_JEMAAT = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1473487241&single=true&output=tsv";
 
         let currentSlideIdx = 0;
 
@@ -151,22 +151,26 @@
             }
 
             const hariIni = new Date();
-            const tanggalHariIni = hariIni.getDate();
-            const bulanHariIni = hariIni.getMonth();
+            const tglSekarang = String(hariIni.getDate()).padStart(2, '0');
+            const blnSekarang = String(hariIni.getMonth() + 1).padStart(2, '0'); 
 
-            // Menyaring jemaat yang berulang tahun hari ini
             const jemaatUltah = data.filter(j => {
                 const tglMentah = j.tanggal_lahir || j.tanggal || '';
-                if (!tglMentah) return false;
-                const d = new Date(tglMentah);
-                if (isNaN(d.getTime())) return false;
-                return d.getDate() === tanggalHariIni && d.getMonth() === bulanHariIni;
+                if (!tglMentah || !tglMentah.includes('-')) return false;
+                
+                const bagian = tglMentah.split('-');
+                if (bagian.length < 3) return false;
+                
+                const blnLahir = bagian[1].padStart(2, '0');
+                const tglLahir = bagian[2].padStart(2, '0');
+                
+                return tglLahir === tglSekarang && blnLahir === blnSekarang;
             });
 
             if (jemaatUltah.length > 0) {
-                const daftarNama = jemaatUltah.map(j => j.nama || j.nama_lengkap || '').filter(n => n !== '');
+                const daftarNama = jemaatUltah.map(j => j.nama_lengkap || j.nama || '').filter(n => n !== '');
                 if (daftarNama.length > 0) {
-                    marquee.innerText = `Selamat Ulang Tahun kepada Jemaat: ${daftarNama.join(', ')} 🥳 Semoga Tuhan Yesus selalu memberkati kesehatan, umur panjang, dan menyertai dalam setiap langkah kehidupan jemaat sekalian!`;
+                    marquee.innerText = `Selamat Ulang Tahun kepada Jemaat: ${daftarNama.join(', ')} 🥳 Semoga Tuhan Yesus selalu memberkati dengan kesehatan, umur panjang, serta sukacita melimpah dalam setiap langkah kehidupan!`;
                     wrapper.classList.remove('hidden');
                     return;
                 }
