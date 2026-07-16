@@ -13,12 +13,13 @@
         .slide-item { grid-column: 1; grid-row: 1; width: 100%; opacity: 0; pointer-events: none; transition: opacity 0.8s ease-in-out; }
         .slide-item.active { opacity: 1; pointer-events: auto; }
         
-        /* Efek Kaca Transparan (Glassmorphism) */
+        /* Efek Kaca Transparan Agak Keabuan (Frosted Glass) */
         .glass-box {
-            background: rgba(255, 255, 255, 0.45);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(220, 225, 235, 0.55);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(110, 68, 180, 0.08);
         }
     </style>
 </head>
@@ -36,7 +37,7 @@
 
         <section class="space-y-3">
             <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Info Terkini</h2>
-            <div id="daftar-berita" class="slider-container rounded-2xl shadow-md glass-box min-h-[100px]"></div>
+            <div id="daftar-berita" class="slider-container rounded-2xl glass-box min-h-[100px]"></div>
         </section>
 
         <section class="space-y-4">
@@ -63,11 +64,10 @@
     </div>
 
     <script>
-        // Tautan format TSV bersih tanpa ada karakter tambahan pengganggu
-        const URL_BERITA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1711430912&single=true&output=tsv";
-        const URL_PELAYANAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=0&single=true&output=tsv";
-        const URL_GALERI = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1957154134&single=true&output=tsv";
-        const URL_FAQ = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=676534391&single=true&output=tsv";
+        const URL_BERITA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1711430912&single=true&output=tsv";[cite: 2]
+        const URL_PELAYANAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=0&single=true&output=tsv";[cite: 2]
+        const URL_GALERI = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1957154134&single=true&output=tsv";[cite: 2]
+        const URL_FAQ = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=676534391&single=true&output=tsv";[cite: 2]
 
         let currentSlideIdx = 0;
 
@@ -159,8 +159,8 @@
                     const nomorSlide = b.no ? `#${b.no}` : `#${i + 1}`;
                     cont.innerHTML += `
                         <div id="slide-${i}" class="slide-item p-5 flex gap-3 items-start ${i===0 ? 'active':''}">
-                            <span class="font-heading font-extrabold text-purple-700 bg-purple-100/80 px-2 py-0.5 rounded-md text-xs mt-0.5">${nomorSlide}</span>
-                            <p class="text-sm text-gray-800 leading-relaxed font-medium">${b.isi_konten}</p>
+                            <span class="font-heading font-extrabold text-purple-700 bg-purple-200/80 px-2 py-0.5 rounded-md text-xs mt-0.5 shadow-sm">${nomorSlide}</span>
+                            <p class="text-sm text-gray-900 leading-relaxed font-semibold">${b.isi_konten}</p>
                         </div>`;
                 });
                 
