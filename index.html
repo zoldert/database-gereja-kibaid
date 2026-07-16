@@ -55,8 +55,12 @@
     </div>
 
     <script>
-        // MASUKKAN URL BARU HASIL "NEW DEPLOYMENT" ANDA DI SINI
-        const API = "https://script.google.com/macros/s/AKfycbyoR7AXVDHB0N302hemy2Rwl9q8WywdzNxsSnlbukZ--rgDUob6AHrHwzMVyagzue14_Q/exec";
+        // ISI MASING-MASING VARIABEL DI BAWAH DENGAN LINK CSV HASIL PUBLIKASIKAN DI WEB
+        const URL_BERITA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1711430912&single=true&output=csv";
+        const URL_PELAYANAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=0&single=true&output=csv";
+        const URL_GALERI = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1957154134&single=true&output=csv";
+        const URL_FAQ = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=676534391&single=true&output=csv";
+
         let currentSlideIdx = 0;
 
         function formatTanggalIndo(dateString) {
@@ -66,16 +70,23 @@
             return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
         }
 
-        // Fungsi pembantu fetch khusus ekstraksi teks dari HtmlOutput Google
-        async function fetchGoogleSheets(sheetName) {
-            const response = await fetch(`${API}?sheet=${sheetName}`);
-            const htmlText = await response.text();
+        // Fungsi ajaib pembaca format CSV Google menjadi Object JavaScript biasa
+        async function fetchCSV(url) {
+            const res = await fetch(url + `&t=${new Date().getTime()}`);
+            const text = await res.text();
+            const lines = text.split("\n").map(line => line.replace('\r', '').split(","));
+            const headers = lines[0];
+            const result = [];
             
-            // Mengekstrak JSON bersih dari dalam dokumen respon Google
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlText, 'text/html');
-            const bodyContent = doc.body.textContent || doc.body.innerText;
-            return JSON.parse(bodyContent.trim());
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].length < headers.length || !lines[i][0]) continue;
+                let obj = {};
+                for (let j = 0; j < headers.length; j++) {
+                    obj[headers[j]] = lines[i][j];
+                }
+                result.push(obj);
+            }
+            return result;
         }
 
         async function initApp() {
@@ -83,10 +94,10 @@
                 document.getElementById('hari-tanggal-berjalan').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
                 
                 const [berita, pelayanan, galeri, faq] = await Promise.all([
-                    fetchGoogleSheets('berita'),
-                    fetchGoogleSheets('pelayanan'),
-                    fetchGoogleSheets('galeri'),
-                    fetchGoogleSheets('faq')
+                    fetchCSV(URL_BERITA),
+                    fetchCSV(URL_PELAYANAN),
+                    fetchCSV(URL_GALERI),
+                    fetchCSV(URL_FAQ)
                 ]);
                 
                 renderBerita(berita);
