@@ -4,13 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Database Gereja KIBAID</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-    
     <style>
         body { font-family: 'Inter', sans-serif; }
         .font-heading { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -19,27 +14,23 @@
         .slide-item.active { opacity: 1; pointer-events: auto; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 tracking-tight antialiased">
+<body class="bg-gray-50 text-gray-800 antialiased">
 
-    <!-- HEADER -->
     <header class="sticky top-0 bg-purple-700 py-5 px-4 text-center text-white shadow-md z-50 max-w-md mx-auto flex flex-col items-center gap-1">
-        <img id="logo-gereja" src="https://i.ibb.co.com/TxJcbZmH/logo-gereja-kibaid.png" 
-             alt="Logo KIBAID" class="w-14 h-14 rounded-full object-cover border-2 border-amber-400 mb-1 shadow-md bg-white">
-        <h1 class="text-lg font-extrabold font-heading tracking-wider uppercase leading-tight text-amber-300">GEREJA KIBAID</h1>
-        <h2 class="text-xs font-bold font-heading tracking-wide uppercase leading-tight text-white/90">JEMAAT AMBON KOTA</h2>
-        <div id="hari-tanggal-berjalan" class="text-[10px] font-medium tracking-wide text-purple-100 mt-1 bg-purple-800/50 px-3 py-0.5 rounded-full">Memuat...</div>
+        <img src="https://i.ibb.co.com/TxJcbZmH/logo-gereja-kibaid.png" class="w-14 h-14 rounded-full object-cover border-2 border-amber-400 mb-1 shadow-md bg-white">
+        <h1 class="text-lg font-extrabold font-heading text-amber-300 uppercase">GEREJA KIBAID</h1>
+        <h2 class="text-xs font-bold font-heading text-white/90 uppercase">JEMAAT AMBON KOTA</h2>
+        <div id="hari-tanggal-berjalan" class="text-[10px] bg-purple-800/50 px-3 py-0.5 rounded-full mt-1">Memuat...</div>
     </header>
 
     <main class="p-4 max-w-md mx-auto space-y-6 pb-12">
         <div id="loading" class="text-center py-6 font-semibold text-purple-900 text-sm">⏳ Memuat data...</div>
 
-        <!-- INFO TERKINI -->
         <section class="space-y-3">
             <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Info Terkini</h2>
             <div id="daftar-berita" class="slider-container rounded-2xl shadow-sm border border-gray-100 bg-white min-h-[140px]"></div>
         </section>
 
-        <!-- WARTA HARI INI -->
         <section class="space-y-4">
             <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                 <h2 class="text-xs font-bold text-purple-700 uppercase tracking-widest mb-3 font-heading">Warta Hari Ini</h2>
@@ -47,103 +38,71 @@
             </div>
         </section>
 
-        <!-- GALERI KEGIATAN -->
         <section class="space-y-3">
             <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Galeri Kegiatan</h2>
             <div id="grid-galeri" class="grid grid-cols-2 gap-3"></div>
         </section>
 
-        <!-- FAQ SECTION -->
         <section class="space-y-3">
             <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Pertanyaan Umum (FAQ)</h2>
             <div class="space-y-2">
-                <!-- FAQ 1 -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-                    <button onclick="toggleFAQ('faq1')" class="w-full text-left p-4 flex justify-between items-center text-sm font-bold text-purple-900">
-                        Apa saja jadwal ibadah rutin?
-                        <span id="icon-faq1">▼</span>
-                    </button>
-                    <div id="faq1" class="hidden p-4 pt-0 text-xs text-gray-600 border-t border-gray-50">
-                        Jadwal ibadah rutin dilaksanakan setiap hari Minggu pukul 09.00 WIT.
-                    </div>
-                </div>
-                <!-- FAQ 2 -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-                    <button onclick="toggleFAQ('faq2')" class="w-full text-left p-4 flex justify-between items-center text-sm font-bold text-purple-900">
-                        Bagaimana cara menjadi jemaat tetap?
-                        <span id="icon-faq2">▼</span>
-                    </button>
-                    <div id="faq2" class="hidden p-4 pt-0 text-xs text-gray-600 border-t border-gray-50">
-                        Silakan menghubungi kantor sekretariat gereja dengan membawa surat keterangan pindah dari gereja asal.
-                    </div>
-                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100"><button onclick="toggleFAQ('faq1')" class="w-full text-left p-4 flex justify-between items-center text-sm font-bold text-purple-900">Apa saja jadwal ibadah rutin?<span id="icon-faq1">▼</span></button><div id="faq1" class="hidden p-4 pt-0 text-xs text-gray-600 border-t border-gray-50">Ibadah rutin setiap Minggu pukul 09.00 WIT.</div></div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100"><button onclick="toggleFAQ('faq2')" class="w-full text-left p-4 flex justify-between items-center text-sm font-bold text-purple-900">Cara menjadi jemaat tetap?<span id="icon-faq2">▼</span></button><div id="faq2" class="hidden p-4 pt-0 text-xs text-gray-600 border-t border-gray-50">Silakan hubungi sekretariat dengan membawa surat pindah.</div></div>
             </div>
         </section>
     </main>
 
-    <!-- FOOTER & MODAL -->
-    <div id="lightbox-modal" class="hidden fixed inset-0 bg-black/95 z-50 flex flex-col justify-center items-center p-4" onclick="closeLightbox()">
-        <button class="absolute top-6 right-6 text-white text-2xl bg-white/10 w-10 h-10 rounded-full flex justify-center items-center">&times;</button>
-        <img id="lightbox-img" src="" class="max-w-full max-h-[75vh] object-contain rounded-lg shadow-2xl">
-    </div>
-
-    <footer class="bg-gray-800 py-5 text-center text-[9px] text-gray-500 max-w-md mx-auto tracking-widest font-heading">
-        &copy; 2026 GEREJA KIBAID JEMAAT AMBON KOTA.
-    </footer>
-
     <script>
-        const SHEETDB_API_URL = "https://sheetdb.io/api/v1/oq2dn8eyynehu"; 
+        const API = "https://sheetdb.io/api/v1/oq2dn8eyynehu";
+        async function initApp() {
+            try {
+                const t = new Date().getTime();
+                document.getElementById('hari-tanggal-berjalan').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                const [berita, pelayanan, galeri] = await Promise.all([
+                    fetch(`${API}?sheet=berita&t=${t}`).then(r => r.json()),
+                    fetch(`${API}?sheet=pelayanan&t=${t}`).then(r => r.json()),
+                    fetch(`${API}?sheet=galeri&t=${t}`).then(r => r.json())
+                ]);
+                renderBerita(berita);
+                renderPelayanan(pelayanan);
+                renderGaleri(galeri);
+                document.getElementById('loading').classList.add('hidden');
+            } catch (e) { document.getElementById('loading').innerText = "❌ Gagal memuat data."; }
+        }
 
         function toggleFAQ(id) {
             const el = document.getElementById(id);
-            const icon = document.getElementById('icon-' + id);
             el.classList.toggle('hidden');
-            icon.innerText = el.classList.contains('hidden') ? '▼' : '▲';
+            document.getElementById('icon-' + id).innerText = el.classList.contains('hidden') ? '▼' : '▲';
         }
 
-        // FUNGSI UMUM LAINNYA (Sama seperti sebelumnya)
-        function updateHeaderDate() {
-            const d = new Date();
-            document.getElementById('hari-tanggal-berjalan').innerText = d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        function renderBerita(data) {
+            const cont = document.getElementById('daftar-berita');
+            const valid = data.filter(b => String(b.aktif).toUpperCase() === "TRUE");
+            valid.reverse().forEach((b, i) => {
+                cont.innerHTML += `<div id="slide-${i}" class="slide-item p-5 ${i===0 ? 'active':''}"><h3 class="font-bold text-gray-950 text-base">${b.judul}</h3><p class="text-sm text-gray-600 mt-2">${b.isi_konten}</p></div>`;
+            });
+            if (valid.length > 1) setInterval(() => {
+                const slides = document.querySelectorAll('.slide-item');
+                slides[currentSlideIdx].classList.remove('active');
+                currentSlideIdx = (currentSlideIdx + 1) % valid.length;
+                slides[currentSlideIdx].classList.add('active');
+            }, 10000);
         }
 
-        function openLightbox(url, title) {
-            document.getElementById('lightbox-img').src = url;
-            document.getElementById('lightbox-modal').classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
+        let currentSlideIdx = 0;
+        function renderPelayanan(data) {
+            const cont = document.getElementById('pelayanan-hari-ini');
+            const hari = new Date();
+            const today = data.filter(p => new Date(p.tanggal_waktu).getDate() === hari.getDate());
+            if (today.length === 0) cont.innerHTML = '<p class="text-gray-400 text-center text-sm">Tidak ada jadwal hari ini.</p>';
+            else today.forEach(p => cont.innerHTML += `<div class="border-l-4 border-purple-600 pl-3"><p class="font-bold text-gray-950">${p.nama_kegiatan}</p></div>`);
         }
 
-        function closeLightbox() {
-            document.getElementById('lightbox-modal').classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
+        function renderGaleri(data) {
+            const cont = document.getElementById('grid-galeri');
+            data.reverse().slice(0, 4).forEach(g => cont.innerHTML += `<div class="bg-white rounded-xl shadow-sm border"><img src="${g.url_foto}" class="w-full h-28 object-cover"><p class="p-2 text-xs font-bold">${g.judul_kegiatan}</p></div>`);
         }
-
-        function toggleWarta(id) {
-            const box = document.getElementById(`detail-${id}`);
-            const btn = document.getElementById(`btn-text-${id}`);
-            const icon = document.getElementById(`btn-icon-${id}`);
-            box.classList.toggle('hidden');
-            btn.innerText = box.classList.contains('hidden') ? "Selengkapnya" : "Sembunyikan";
-            icon.style.transform = box.classList.contains('hidden') ? "rotate(0deg)" : "rotate(180deg)";
-        }
-
-        async function initApp() {
-            updateHeaderDate();
-            const t = new Date().getTime();
-            const [resBerita, resPelayanan, resGaleri] = await Promise.all([
-                fetch(`${SHEETDB_API_URL}?sheet=berita&t=${t}`).then(r => r.json()),
-                fetch(`${SHEETDB_API_URL}?sheet=pelayanan&t=${t}`).then(r => r.json()),
-                fetch(`${SHEETDB_API_URL}?sheet=galeri&t=${t}`).then(r => r.json())
-            ]);
-            renderBerita(resBerita);
-            renderPelayanan(resPelayanan);
-            renderGaleri(resGaleri);
-            document.getElementById('loading').classList.add('hidden');
-        }
-
-        // (Fungsi renderBerita, renderPelayanan, renderGaleri, runInfoSlider tetap sama seperti sebelumnya)
-        // [Silakan salin fungsi render lainnya dari kode sebelumnya ke sini]
-        // Jika perlu, saya bisa sertakan versi lengkap dengan fungsinya lagi.
         window.onload = initApp;
     </script>
 </body>
