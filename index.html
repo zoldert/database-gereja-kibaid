@@ -264,12 +264,14 @@
                 updateHeaderDate();
                 document.getElementById('loading').classList.remove('hidden');
                 
+                // Tambahan cache-busting agar selalu membaca data terbaru dari Google Sheets
+                const t = new Date().getTime();
                 const [resBerita, resPelayanan, resGaleri, resMajelis, resJemaat] = await Promise.all([
-                    fetch(`${SHEETDB_API_URL}?sheet=berita`).then(r => r.json()),
-                    fetch(`${SHEETDB_API_URL}?sheet=pelayanan`).then(r => r.json()),
-                    fetch(`${SHEETDB_API_URL}?sheet=galeri`).then(r => r.json()),
-                    fetch(`${SHEETDB_API_URL}?sheet=majelis`).then(r => r.json()),
-                    fetch(`${SHEETDB_API_URL}?sheet=jemaat`).then(r => r.json())
+                    fetch(`${SHEETDB_API_URL}?sheet=berita&t=${t}`).then(r => r.json()),
+                    fetch(`${SHEETDB_API_URL}?sheet=pelayanan&t=${t}`).then(r => r.json()),
+                    fetch(`${SHEETDB_API_URL}?sheet=galeri&t=${t}`).then(r => r.json()),
+                    fetch(`${SHEETDB_API_URL}?sheet=majelis&t=${t}`).then(r => r.json()),
+                    fetch(`${SHEETDB_API_URL}?sheet=jemaat&t=${t}`).then(r => r.json())
                 ]);
 
                 renderBerita(resBerita);
@@ -344,7 +346,6 @@
             }
         }
 
-        // MANAGEMENT SLIDER DENGAN SISTEM TIMPA FADE OPACITY
         let currentSlideIdx = 0;
         let slideIntervalId = null;
 
@@ -353,16 +354,14 @@
             if (slideIntervalId) clearInterval(slideIntervalId);
             
             slideIntervalId = setInterval(() => {
-                // Sembunyikan slide aktif saat ini
                 const prevSlide = document.getElementById(`slide-${currentSlideIdx}`);
                 if(prevSlide) prevSlide.classList.remove('active');
                 
                 currentSlideIdx = (currentSlideIdx + 1) % totalSlides;
                 
-                // Munculkan slide berikutnya dengan transisi fade
                 const nextSlide = document.getElementById(`slide-${currentSlideIdx}`);
                 if(nextSlide) nextSlide.classList.add('active');
-            }, 10000); // Kunci di 10 Detik
+            }, 10000);
         }
 
         function renderBerita(data) {
@@ -376,8 +375,10 @@
                 const reversedData = [...data].reverse();
 
                 reversedData.forEach((b) => {
-                    if (b.aktif === "TRUE" || b.aktif === true || b.aktif === "true") {
-                        
+                    // Membersihkan spasi pada data 'aktif' dari Google Sheets
+                    const statusAktif = String(b.aktif || "").trim().toUpperCase();
+
+                    if (statusAktif === "TRUE") {
                         if (b.tanggal_publikasi) {
                             const tglPublikasi = new Date(b.tanggal_publikasi);
                             const selisihWaktu = hariIni.getTime() - tglPublikasi.getTime();
@@ -386,7 +387,6 @@
                             if (selisihHari > 7) return; 
                         }
 
-                        // Slide pertama otomatis mendapat kelas 'active'
                         const activeClass = validBeritaCount === 0 ? 'active' : '';
 
                         container.innerHTML += `
