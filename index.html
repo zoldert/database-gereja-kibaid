@@ -81,7 +81,6 @@
         const URL_PELAYANAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=0&single=true&output=tsv";
         const URL_GALERI = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1957154134&single=true&output=tsv";
         const URL_FAQ = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=676534391&single=true&output=tsv";
-        // Tautan jemaat yang disesuaikan ke format tsv agar dapat diparse
         const URL_JEMAAT = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1473487241&single=true&output=tsv";
 
         let currentSlideIdx = 0;
@@ -153,29 +152,37 @@
             const hariIni = new Date();
             const tglSekarang = String(hariIni.getDate()).padStart(2, '0');
             const blnSekarang = String(hariIni.getMonth() + 1).padStart(2, '0'); 
+            const thnSekarang = hariIni.getFullYear();
 
-            const jemaatUltah = data.filter(j => {
+            const jemaatUltahInfo = [];
+
+            data.forEach(j => {
                 const tglMentah = j.tanggal_lahir || j.tanggal || '';
-                if (!tglMentah || !tglMentah.includes('-')) return false;
+                if (!tglMentah || !tglMentah.includes('-')) return;
                 
                 const bagian = tglMentah.split('-');
-                if (bagian.length < 3) return false;
+                if (bagian.length < 3) return;
                 
+                const thnLahir = parseInt(bagian[0]);
                 const blnLahir = bagian[1].padStart(2, '0');
                 const tglLahir = bagian[2].padStart(2, '0');
                 
-                return tglLahir === tglSekarang && blnLahir === blnSekarang;
+                if (tglLahir === tglSekarang && blnLahir === blnSekarang) {
+                    const nama = j.nama_lengkap || j.nama || '';
+                    if (nama) {
+                        // Menghitung umur jemaat secara presisi
+                        const umur = thnSekarang - thnLahir;
+                        jemaatUltahInfo.push(`${nama} (${umur} thn)`);
+                    }
+                }
             });
 
-            if (jemaatUltah.length > 0) {
-                const daftarNama = jemaatUltah.map(j => j.nama_lengkap || j.nama || '').filter(n => n !== '');
-                if (daftarNama.length > 0) {
-                    marquee.innerText = `Selamat Ulang Tahun kepada Jemaat: ${daftarNama.join(', ')} 🥳 Semoga Tuhan Yesus selalu memberkati dengan kesehatan, umur panjang, serta sukacita melimpah dalam setiap langkah kehidupan!`;
-                    wrapper.classList.remove('hidden');
-                    return;
-                }
+            if (jemaatUltahInfo.length > 0) {
+                marquee.innerText = `Selamat Ulang Tahun kepada Jemaat: ${jemaatUltahInfo.join(', ')} 🥳 Semoga Tuhan Yesus selalu memberkati dengan kesehatan, umur panjang, serta sukacita melimpah dalam setiap langkah kehidupan!`;
+                wrapper.classList.remove('hidden');
+            } else {
+                wrapper.classList.add('hidden');
             }
-            wrapper.classList.add('hidden');
         }
 
         function renderFAQ(data) {
