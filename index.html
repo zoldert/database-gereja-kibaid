@@ -18,6 +18,16 @@
         .font-heading { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
         }
+        /* Style Tambahan untuk Efek Rel Geser Halus */
+        .slider-track {
+            display: flex;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+        }
+        .slide-item {
+            flex: 0 0 100%;
+            width: 100%;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 tracking-tight antialiased">
@@ -47,12 +57,13 @@
             ⏳ Memuat data jemaat...
         </div>
 
-        <!-- ================= 1. INFO TERKINI / BERITA ================= -->
+        <!-- ================= 1. INFO TERKINI / BERITA (DENGAN SLIDER ANISMASI GESER HORIZONTAL) ================= -->
         <section class="space-y-3">
             <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Info Terkini</h2>
             <div class="relative overflow-hidden rounded-2xl shadow-sm border border-gray-100 bg-white">
-                <div id="daftar-berita" class="relative min-h-[140px]">
-                    <!-- Konten Berita Dinamis -->
+                <!-- Rel Pembungkus Slider -->
+                <div id="daftar-berita" class="slider-track">
+                    <!-- Konten Berita Dinamis Masuk Sini -->
                 </div>
             </div>
         </section>
@@ -327,6 +338,7 @@
             }
         }
 
+        // LOGIKA DENGAN TRANSFORM TRANSLATE UNTUK ANIMASI SLIDE HORIZONTAL
         let currentSlideIdx = 0;
         let slideIntervalId = null;
 
@@ -334,14 +346,12 @@
             if (totalSlides <= 1) return;
             if (slideIntervalId) clearInterval(slideIntervalId);
             
+            const track = document.getElementById('daftar-berita');
+            
             slideIntervalId = setInterval(() => {
-                const currentSlide = document.getElementById(`slide-${currentSlideIdx}`);
-                if (currentSlide) currentSlide.classList.add('hidden');
-                
                 currentSlideIdx = (currentSlideIdx + 1) % totalSlides;
-                
-                const nextSlide = document.getElementById(`slide-${currentSlideIdx}`);
-                if (nextSlide) nextSlide.classList.remove('hidden');
+                // Menggeser rel trek trek kontainer ke kiri berdasarkan indeks slide saat ini
+                track.style.transform = `translateX(-${currentSlideIdx * 100}%)`;
             }, 5000);
         }
 
@@ -366,10 +376,9 @@
                             if (selisihHari > 7) return; 
                         }
 
-                        const isHidden = validBeritaCount === 0 ? '' : 'hidden';
-
+                        // Menyusun berita berjajar menyamping di dalam kelas slide-item
                         container.innerHTML += `
-                            <div id="slide-${validBeritaCount}" class="p-5 transition-all duration-500 min-h-[140px] flex flex-col justify-between ${isHidden}">
+                            <div class="slide-item p-5 min-h-[140px] flex flex-col justify-between">
                                 <div>
                                     <h3 class="font-bold text-gray-950 text-base font-heading">${b.judul}</h3>
                                     <span class="text-[10px] text-gray-400 block mb-2 font-medium">📅 ${b.tanggal_publikasi || ''}</span>
@@ -383,9 +392,11 @@
             }
 
             if (validBeritaCount === 0) {
-                container.innerHTML = '<div class="p-5 text-gray-400 text-sm italic text-center">Belum ada informasi terbaru minggu ini.</div>';
+                container.innerHTML = '<div class="slide-item p-5 text-gray-400 text-sm italic text-center w-full">Belum ada informasi terbaru minggu ini.</div>';
             } else {
                 currentSlideIdx = 0;
+                // Mengunci lebar rel pembungkus sesuai dengan kelipatan total berita yang valid
+                document.getElementById('daftar-berita').style.width = `${validBeritaCount * 100}%`;
                 runInfoSlider(validBeritaCount);
             }
         }
