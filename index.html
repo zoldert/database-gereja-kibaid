@@ -21,20 +21,27 @@
             border: 1px solid rgba(255, 255, 255, 0.5);
             box-shadow: 0 8px 32px 0 rgba(110, 68, 180, 0.08);
         }
+
+        /* Mengatur posisi sticky teks berjalan tepat di bawah tinggi header (header +- 128px) */
+        .sticky-ultah {
+            position: sticky;
+            top: 127px; 
+            z-index: 40;
+        }
     </style>
 </head>
 <body class="bg-purple-50/30 text-gray-800 antialiased min-h-screen flex flex-col justify-between">
 
     <div class="w-full">
-        <header class="sticky top-0 bg-purple-700 py-5 px-4 text-center text-white shadow-md z-50 max-w-md mx-auto flex flex-col items-center gap-1">
+        <header id="main-header" class="sticky top-0 bg-purple-700 py-5 px-4 text-center text-white shadow-md z-50 max-w-md mx-auto flex flex-col items-center gap-1">
             <img src="https://i.ibb.co.com/TxJcbZmH/logo-gereja-kibaid.png" class="w-14 h-14 rounded-full object-cover border-2 border-amber-400 mb-1 shadow-md bg-white">
             <h1 class="text-lg font-extrabold font-heading text-amber-300 uppercase">GEREJA KIBAID</h1>
             <h2 class="text-xs font-bold font-heading text-white/90 uppercase">JEMAAT AMBON KOTA</h2>
             <div id="hari-tanggal-berjalan" class="text-[10px] bg-purple-800/50 px-3 py-0.5 rounded-full mt-1">Memuat...</div>
         </header>
 
-        <!-- Teks Berjalan Ulang Tahun -->
-        <div id="wrapper-ultah" class="hidden w-full max-w-md mx-auto bg-amber-100 border-b border-amber-200 py-2 px-4 text-xs font-semibold text-amber-900 flex items-center shadow-sm">
+        <!-- Teks Berjalan Ulang Tahun yang sekarang disetel Sticky mengikuti Header -->
+        <div id="wrapper-ultah" class="hidden w-full max-w-md mx-auto bg-amber-100 border-b border-amber-200 py-2 px-4 text-xs font-semibold text-amber-900 flex items-center shadow-sm sticky-ultah">
             <span class="flex-shrink-0 bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded-full mr-2 font-bold animate-pulse">🎉 HUT</span>
             <marquee id="teks-berjalan-ultah" scrollamount="4" behavior="scroll" direction="left" class="w-full">Memuat data ulang tahun...</marquee>
         </div>
@@ -44,7 +51,7 @@
 
             <section class="space-y-3">
                 <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Info Terkini</h2>
-                <div id="daftar-berita" class="slider-container rounded-2xl glass-box min-h-[100px]"></div>
+                <div id="daftar-berita" class="slider-container rounded-2xl shadow-md glass-box min-h-[100px]"></div>
             </section>
 
             <section class="space-y-4">
@@ -133,6 +140,12 @@
                 renderGaleri(galeri);
                 renderFAQ(faq);
                 
+                // Menyesuaikan posisi top sticky teks berjalan secara dinamis mengikuti tinggi header asli di perangkat jemaat
+                setTimeout(() => {
+                    const headerHeight = document.getElementById('main-header').offsetHeight;
+                    document.getElementById('wrapper-ultah').style.top = (headerHeight - 1) + 'px';
+                }, 100);
+
                 document.getElementById('loading').classList.add('hidden');
             } catch (e) { 
                 document.getElementById('loading').innerText = "❌ Gagal memuat data."; 
@@ -170,7 +183,6 @@
                 if (tglLahir === tglSekarang && blnLahir === blnSekarang) {
                     const nama = j.nama_lengkap || j.nama || '';
                     if (nama) {
-                        // Menghitung umur jemaat secara presisi
                         const umur = thnSekarang - thnLahir;
                         jemaatUltahInfo.push(`${nama} (${umur} thn)`);
                     }
