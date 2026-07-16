@@ -17,7 +17,7 @@
 <body class="bg-gray-50 text-gray-800 antialiased">
 
     <header class="sticky top-0 bg-purple-700 py-5 px-4 text-center text-white shadow-md z-50 max-w-md mx-auto flex flex-col items-center gap-1">
-        <img src="https://i.ibb.co.com/TxJcbZmH/logo-gereja-kibaid.png" class="w-14 h-14 rounded-full object-cover border-2 border-amber-400 mb-1 shadow-md bg-white">
+        <img src="https://i.ibb.co.com/TxJcbZmH/logo-repositori-kibaid.png" onerror="this.src='https://i.ibb.co.com/TxJcbZmH/logo-gereja-kibaid.png'" class="w-14 h-14 rounded-full object-cover border-2 border-amber-400 mb-1 shadow-md bg-white">
         <h1 class="text-lg font-extrabold font-heading text-amber-300 uppercase">GEREJA KIBAID</h1>
         <h2 class="text-xs font-bold font-heading text-white/90 uppercase">JEMAAT AMBON KOTA</h2>
         <div id="hari-tanggal-berjalan" class="text-[10px] bg-purple-800/50 px-3 py-0.5 rounded-full mt-1">Memuat...</div>
@@ -55,9 +55,9 @@
     </div>
 
     <script>
-        // Menggunakan tautan /exec yang benar dan valid sesuai deployment Anda
         const API = "https://script.google.com/macros/s/AKfycbxc4dDJmnSU48Ij8sBTb_Vsrhrz2y2jeUJHba34IQLx9M4mtV1mk7jqBpPHPDqYIWzGjQ/exec";
         let currentSlideIdx = 0;
+        let fetchedData = {};
 
         function formatTanggalIndo(dateString) {
             if (!dateString) return "";
@@ -66,22 +66,34 @@
             return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
         }
 
-        // Fungsi pembantu fetch khusus untuk menangani redirect dari Google Apps Script secara aman
-        async function fetchGoogleData(sheetName) {
-            const res = await fetch(`${API}?sheet=${sheetName}`);
-            if (!res.ok) throw new Error("Network response error");
-            return res.json();
+        // Fungsi Request Data Berbasis JSONP untuk menghindari CORS Block
+        function requestJsonp(sheetName) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'callback_' + sheetName + '_' + Math.floor(Math.random() * 100000);
+                window[callbackName] = function(data) {
+                    resolve(data);
+                    delete window[callbackName];
+                    document.getElementById(callbackName).remove();
+                };
+                
+                const script = document.createElement('script');
+                script.id = callbackName;
+                script.src = `${API}?sheet=${sheetName}&callback=${callbackName}`;
+                script.onerror = () => reject(new Error(`Gagal memuat sheet ${sheetName}`));
+                document.body.appendChild(script);
+            });
         }
 
         async function initApp() {
             try {
                 document.getElementById('hari-tanggal-berjalan').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
                 
+                // Mengambil seluruh data secara paralel aman dengan JSONP
                 const [berita, pelayanan, galeri, faq] = await Promise.all([
-                    fetchGoogleData('berita'),
-                    fetchGoogleData('pelayanan'),
-                    fetchGoogleData('galeri'),
-                    fetchGoogleData('faq')
+                    requestJsonp('berita'),
+                    requestJsonp('pelayanan'),
+                    requestJsonp('galeri'),
+                    requestJsonp('faq')
                 ]);
                 
                 renderBerita(berita);
