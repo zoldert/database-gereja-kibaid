@@ -23,40 +23,48 @@
         }
     </style>
 </head>
-<body class="bg-purple-50/30 text-gray-800 antialiased">
+<body class="bg-purple-50/30 text-gray-800 antialiased min-h-screen flex flex-col justify-between">
 
-    <header class="sticky top-0 bg-purple-700 py-5 px-4 text-center text-white shadow-md z-50 max-w-md mx-auto flex flex-col items-center gap-1">
-        <img src="https://i.ibb.co.com/TxJcbZmH/logo-gereja-kibaid.png" class="w-14 h-14 rounded-full object-cover border-2 border-amber-400 mb-1 shadow-md bg-white">
-        <h1 class="text-lg font-extrabold font-heading text-amber-300 uppercase">GEREJA KIBAID</h1>
-        <h2 class="text-xs font-bold font-heading text-white/90 uppercase">JEMAAT AMBON KOTA</h2>
-        <div id="hari-tanggal-berjalan" class="text-[10px] bg-purple-800/50 px-3 py-0.5 rounded-full mt-1">Memuat...</div>
-    </header>
+    <div class="w-full">
+        <header class="sticky top-0 bg-purple-700 py-5 px-4 text-center text-white shadow-md z-50 max-w-md mx-auto flex flex-col items-center gap-1">
+            <img src="https://i.ibb.co.com/TxJcbZmH/logo-gereja-kibaid.png" class="w-14 h-14 rounded-full object-cover border-2 border-amber-400 mb-1 shadow-md bg-white">
+            <h1 class="text-lg font-extrabold font-heading text-amber-300 uppercase">GEREJA KIBAID</h1>
+            <h2 class="text-xs font-bold font-heading text-white/90 uppercase">JEMAAT AMBON KOTA</h2>
+            <div id="hari-tanggal-berjalan" class="text-[10px] bg-purple-800/50 px-3 py-0.5 rounded-full mt-1">Memuat...</div>
+        </header>
 
-    <main class="p-4 max-w-md mx-auto space-y-6 pb-12">
-        <div id="loading" class="text-center py-6 font-semibold text-purple-900 text-sm">⏳ Memuat data...</div>
+        <main class="p-4 max-w-md mx-auto space-y-6 pb-6">
+            <div id="loading" class="text-center py-6 font-semibold text-purple-900 text-sm">⏳ Memuat data...</div>
 
-        <section class="space-y-3">
-            <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Info Terkini</h2>
-            <div id="daftar-berita" class="slider-container rounded-2xl glass-box min-h-[100px]"></div>
-        </section>
+            <section class="space-y-3">
+                <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Info Terkini</h2>
+                <div id="daftar-berita" class="slider-container rounded-2xl glass-box min-h-[100px]"></div>
+            </section>
 
-        <section class="space-y-4">
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                <h2 class="text-xs font-bold text-purple-700 uppercase tracking-widest mb-3 font-heading">Warta Hari Ini</h2>
-                <div id="pelayanan-hari-ini" class="space-y-4"></div>
-            </div>
-        </section>
+            <section class="space-y-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                    <h2 class="text-xs font-bold text-purple-700 uppercase tracking-widest mb-3 font-heading">Warta Hari Ini</h2>
+                    <div id="pelayanan-hari-ini" class="space-y-4"></div>
+                </div>
+            </section>
 
-        <section class="space-y-3">
-            <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Galeri Kegiatan</h2>
-            <div id="grid-galeri" class="grid grid-cols-2 gap-3"></div>
-        </section>
+            <section class="space-y-3">
+                <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Galeri Kegiatan</h2>
+                <div id="grid-galeri" class="grid grid-cols-2 gap-3"></div>
+            </section>
 
-        <section class="space-y-3">
-            <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Pertanyaan Umum (FAQ)</h2>
-            <div id="daftar-faq" class="space-y-2"></div>
-        </section>
-    </main>
+            <section class="space-y-3">
+                <h2 class="text-base font-extrabold font-heading text-purple-950 border-b-2 border-purple-100 pb-1 px-1">Pertanyaan Umum (FAQ)</h2>
+                <div id="daftar-faq" class="space-y-2"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- FOOTER COPYRIGHT BARU -->
+    <footer class="w-full bg-purple-900 py-4 px-4 text-center text-white/70 text-[10px] font-medium max-w-md mx-auto rounded-t-2xl shadow-inner mt-6">
+        <p>&copy; 2026 Gereja KIBAID Jemaat Ambon Kota. All Rights Reserved.</p>
+        <p class="text-white/40 mt-0.5">Dikelola secara internal untuk keperluan warta jemaat.</p>
+    </footer>
 
     <div id="lightbox-modal" class="hidden fixed inset-0 bg-black/95 z-50 flex flex-col justify-center items-center p-4" onclick="closeLightbox()">
         <button class="absolute top-6 right-6 text-white text-2xl font-light bg-white/10 w-10 h-10 rounded-full flex justify-center items-center">&times;</button>
@@ -64,7 +72,6 @@
     </div>
 
     <script>
-        // URL bersih format TSV tanpa teks tambahan apa pun
         const URL_BERITA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1711430912&single=true&output=tsv";
         const URL_PELAYANAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=0&single=true&output=tsv";
         const URL_GALERI = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1957154134&single=true&output=tsv";
