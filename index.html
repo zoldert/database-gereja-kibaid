@@ -55,7 +55,7 @@
     </div>
 
     <script>
-        // ISI MASING-MASING VARIABEL DI BAWAH DENGAN LINK CSV HASIL PUBLIKASIKAN DI WEB
+        // Link CSV dari Google Sheets Anda sudah dimasukkan langsung di bawah ini
         const URL_BERITA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1711430912&single=true&output=csv";
         const URL_PELAYANAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=0&single=true&output=csv";
         const URL_GALERI = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSe0ZC6snhycmzN-_pPJzIkfqRYDtiTtJMVxkuaOeeVOTB4JgNmzcLYGYrHgezH_VIrqTFRYmxw_msG/pub?gid=1957154134&single=true&output=csv";
@@ -70,19 +70,24 @@
             return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
         }
 
-        // Fungsi ajaib pembaca format CSV Google menjadi Object JavaScript biasa
+        function cleanQuotes(str) {
+            if (!str) return "";
+            return str.trim().replace(/^["']|["']$/g, '');
+        }
+
         async function fetchCSV(url) {
             const res = await fetch(url + `&t=${new Date().getTime()}`);
             const text = await res.text();
+            
             const lines = text.split("\n").map(line => line.replace('\r', '').split(","));
-            const headers = lines[0];
+            const headers = lines[0].map(h => cleanQuotes(h));
             const result = [];
             
             for (let i = 1; i < lines.length; i++) {
                 if (lines[i].length < headers.length || !lines[i][0]) continue;
                 let obj = {};
                 for (let j = 0; j < headers.length; j++) {
-                    obj[headers[j]] = lines[i][j];
+                    obj[headers[j]] = cleanQuotes(lines[i][j]);
                 }
                 result.push(obj);
             }
@@ -141,19 +146,23 @@
         function renderBerita(data) {
             const cont = document.getElementById('daftar-berita');
             if (Array.isArray(data)) {
-                const valid = data.filter(b => String(b.aktif).toUpperCase() === "TRUE");
+                const valid = data.filter(b => b.aktif && b.aktif.toString().toUpperCase().trim() === "TRUE");
+                
                 valid.reverse().forEach((b, i) => {
                     const tglRapi = formatTanggalIndo(b.tanggal_publikasi);
                     cont.innerHTML += `<div id="slide-${i}" class="slide-item p-5 ${i===0 ? 'active':''}"><h3 class="font-bold text-gray-950 text-base font-heading">${b.judul}</h3><span class="text-[10px] text-gray-400 block mb-2">📅 ${tglRapi}</span><p class="text-sm text-gray-600">${b.isi_konten}</p></div>`;
                 });
-                if (valid.length > 1) setInterval(() => {
-                    const slides = document.querySelectorAll('.slide-item');
-                    if(slides.length > 0) {
-                        slides[currentSlideIdx].classList.remove('active');
-                        currentSlideIdx = (currentSlideIdx + 1) % valid.length;
-                        slides[currentSlideIdx].classList.add('active');
-                    }
-                }, 10000);
+                
+                if (valid.length > 1) {
+                    setInterval(() => {
+                        const slides = document.querySelectorAll('.slide-item');
+                        if(slides.length > 0) {
+                            slides[currentSlideIdx].classList.remove('active');
+                            currentSlideIdx = (currentSlideIdx + 1) % valid.length;
+                            slides[currentSlideIdx].classList.add('active');
+                        }
+                    }, 10000);
+                }
             }
         }
 
