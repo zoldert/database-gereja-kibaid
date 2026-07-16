@@ -62,50 +62,74 @@
             try {
                 const t = new Date().getTime();
                 document.getElementById('hari-tanggal-berjalan').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                
+                // Memuat semua data sekaligus
                 const [berita, pelayanan, galeri, faq] = await Promise.all([
                     fetch(`${API}?sheet=berita&t=${t}`).then(r => r.json()),
                     fetch(`${API}?sheet=pelayanan&t=${t}`).then(r => r.json()),
                     fetch(`${API}?sheet=galeri&t=${t}`).then(r => r.json()),
                     fetch(`${API}?sheet=faq&t=${t}`).then(r => r.json())
                 ]);
+                
                 renderBerita(berita);
                 renderPelayanan(pelayanan);
                 renderGaleri(galeri);
                 renderFAQ(faq);
+                
                 document.getElementById('loading').classList.add('hidden');
-            } catch (e) { document.getElementById('loading').innerText = "❌ Gagal memuat data."; }
+            } catch (e) { document.getElementById('loading').innerText = "❌ Gagal memuat data."; console.error(e); }
         }
 
         function renderFAQ(data) {
             const cont = document.getElementById('daftar-faq');
             cont.innerHTML = '';
             data.forEach((item, i) => {
-                // Gunakan nama kolom yang persis sama dengan di Google Sheets (huruf besar/kecil harus sama)
-                const pertanyaan = item.Pertanyaan; 
-                const jawaban = item.Jawaban;
-                
                 cont.innerHTML += `
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100">
                         <button onclick="toggleFAQ('faq-${i}')" class="w-full text-left p-4 flex justify-between items-center text-sm font-bold text-purple-900">
-                            ${pertanyaan} <span id="icon-faq-${i}">▼</span>
+                            ${item.Pertanyaan} <span id="icon-faq-${i}">▼</span>
                         </button>
-                        <div id="faq-${i}" class="hidden p-4 pt-0 text-xs text-gray-600 border-t border-gray-50">${jawaban}</div>
+                        <div id="faq-${i}" class="hidden p-4 pt-0 text-xs text-gray-600 border-t border-gray-50">${item.Jawaban}</div>
                     </div>`;
             });
         }
-        
+
         function toggleFAQ(id) {
             const el = document.getElementById(id);
             el.classList.toggle('hidden');
             document.getElementById('icon-' + id).innerText = el.classList.contains('hidden') ? '▼' : '▲';
         }
 
-        // Fungsi lainnya tetap sama...
+        // --- Fungsi-fungsi render lainnya tetap sama ---
         function openLightbox(url) { document.getElementById('lightbox-img').src = url; document.getElementById('lightbox-modal').classList.remove('hidden'); }
         function closeLightbox() { document.getElementById('lightbox-modal').classList.add('hidden'); }
-        function renderBerita(data) { /* ... fungsi renderBerita sebelumnya ... */ }
-        function renderPelayanan(data) { /* ... fungsi renderPelayanan sebelumnya ... */ }
-        function renderGaleri(data) { /* ... fungsi renderGaleri sebelumnya ... */ }
+        
+        function renderBerita(data) {
+            const cont = document.getElementById('daftar-berita');
+            const valid = data.filter(b => String(b.aktif).toUpperCase() === "TRUE");
+            valid.reverse().forEach((b, i) => {
+                cont.innerHTML += `<div id="slide-${i}" class="slide-item p-5 ${i===0 ? 'active':''}"><h3 class="font-bold text-gray-950 text-base">${b.judul}</h3><span class="text-[10px] text-gray-400 block mb-2">📅 ${b.tanggal_publikasi}</span><p class="text-sm text-gray-600">${b.isi_konten}</p></div>`;
+            });
+            if (valid.length > 1) setInterval(() => {
+                const slides = document.querySelectorAll('.slide-item');
+                slides[currentSlideIdx].classList.remove('active');
+                currentSlideIdx = (currentSlideIdx + 1) % valid.length;
+                slides[currentSlideIdx].classList.add('active');
+            }, 10000);
+        }
+
+        function renderPelayanan(data) {
+            const cont = document.getElementById('pelayanan-hari-ini');
+            const hari = new Date();
+            const today = data.filter(p => new Date(p.tanggal_waktu).getDate() === hari.getDate());
+            if (today.length === 0) cont.innerHTML = '<p class="text-gray-400 text-center text-sm">Tidak ada jadwal hari ini.</p>';
+            else today.forEach(p => cont.innerHTML += `<div class="border-l-4 border-purple-600 pl-3"><p class="font-bold text-gray-950">${p.nama_kegiatan}</p></div>`);
+        }
+
+        function renderGaleri(data) {
+            const cont = document.getElementById('grid-galeri');
+            data.reverse().slice(0, 4).forEach(g => cont.innerHTML += `<div class="bg-white rounded-xl shadow-sm border border-gray-100 cursor-pointer overflow-hidden" onclick="openLightbox('${g.url_foto}')"><img src="${g.url_foto}" class="w-full h-28 object-cover"><div class="p-2"><p class="text-xs font-bold truncate">${g.judul_kegiatan}</p><p class="text-[9px] text-gray-400">📅 ${g.tanggal_kegiatan}</p></div></div>`);
+        }
         window.onload = initApp;
     </script>
 </body>
