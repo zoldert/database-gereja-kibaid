@@ -55,20 +55,19 @@
     </div>
 
     <script>
-        const API = "https://sheetdb.io/api/v1/oq2dn8eyynehu";
+        // GANTI TULISAN DI BAWAH INI DENGAN URL APLIKASI WEB YANG ANDA SALIN
+        const API = "PASTE_URL_APLIKASI_WEB_DI_SINI";
         let currentSlideIdx = 0;
 
         async function initApp() {
             try {
-                const t = new Date().getTime();
                 document.getElementById('hari-tanggal-berjalan').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
                 
-                // Memuat semua data sekaligus
                 const [berita, pelayanan, galeri, faq] = await Promise.all([
-                    fetch(`${API}?sheet=berita&t=${t}`).then(r => r.json()),
-                    fetch(`${API}?sheet=pelayanan&t=${t}`).then(r => r.json()),
-                    fetch(`${API}?sheet=galeri&t=${t}`).then(r => r.json()),
-                    fetch(`${API}?sheet=faq&t=${t}`).then(r => r.json())
+                    fetch(`${API}?sheet=berita`).then(r => r.json()),
+                    fetch(`${API}?sheet=pelayanan`).then(r => r.json()),
+                    fetch(`${API}?sheet=galeri`).then(r => r.json()),
+                    fetch(`${API}?sheet=faq`).then(r => r.json())
                 ]);
                 
                 renderBerita(berita);
@@ -100,7 +99,6 @@
             document.getElementById('icon-' + id).innerText = el.classList.contains('hidden') ? '▼' : '▲';
         }
 
-        // --- Fungsi-fungsi render lainnya tetap sama ---
         function openLightbox(url) { document.getElementById('lightbox-img').src = url; document.getElementById('lightbox-modal').classList.remove('hidden'); }
         function closeLightbox() { document.getElementById('lightbox-modal').classList.add('hidden'); }
         
