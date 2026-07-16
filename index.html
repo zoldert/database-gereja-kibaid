@@ -18,7 +18,7 @@
         .font-heading { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
         }
-        /* Perbaikan Sistem Trek Slider Agar Teks Tidak Terpotong */
+        /* Perbaikan Sistem Slider Agar Teks Mengikuti Lebar Kotak Putih */
         .slider-container {
             position: relative;
             overflow: hidden;
@@ -27,15 +27,13 @@
         .slider-track {
             display: flex;
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            width: 100%;
         }
         .slide-item {
             flex: 0 0 100%;
             width: 100%;
+            min-width: 100%;
             max-width: 100%;
             box-sizing: border-box;
-            white-space: normal;
-            word-break: break-word;
         }
     </style>
 </head>
@@ -355,11 +353,10 @@
             
             const track = document.getElementById('daftar-berita');
             
-            // PERUBAHAN DURASI: Bergeser otomatis setiap 10000ms (10 Detik)
             slideIntervalId = setInterval(() => {
                 currentSlideIdx = (currentSlideIdx + 1) % totalSlides;
                 track.style.transform = `translateX(-${currentSlideIdx * 100}%)`;
-            }, 10000);
+            }, 10000); // 10 Detik
         }
 
         function renderBerita(data) {
@@ -383,12 +380,13 @@
                             if (selisihHari > 7) return; 
                         }
 
+                        // Perubahan struktur div pembungkus teks agar 100% melipat ke bawah mengikuti card putih
                         container.innerHTML += `
-                            <div class="slide-item p-5 min-h-[140px] flex flex-col justify-between">
-                                <div class="w-full">
-                                    <h3 class="font-bold text-gray-950 text-base font-heading break-words whitespace-normal">${b.judul}</h3>
+                            <div class="slide-item p-5 min-h-[140px] flex flex-col justify-between overflow-hidden">
+                                <div class="w-full flex flex-col">
+                                    <h3 class="font-bold text-gray-950 text-base font-heading break-all max-w-full">${b.judul}</h3>
                                     <span class="text-[10px] text-gray-400 block mb-2 font-medium">📅 ${b.tanggal_publikasi || ''}</span>
-                                    <p class="text-sm text-gray-600 leading-relaxed font-normal break-words whitespace-normal">${b.isi_konten}</p>
+                                    <p class="text-sm text-gray-600 leading-relaxed font-normal overflow-wrap-break-word break-words max-w-full">${b.isi_konten}</p>
                                 </div>
                             </div>
                         `;
